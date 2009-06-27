@@ -24,8 +24,8 @@ float test2()
    Unary operators parse full expressions but should only allow a single statement.
 
    Applies to -X, +A, !A ... (all of them)
-   Changed NOT_PRIORITY from 5 to 1
- */
+   Changed NOT_PRIORITY from 5 to 1 
+*/
 
 float test_for_fix_1()
 {
@@ -35,4 +35,12 @@ float test_for_fix_1()
 float test_for_fix_2()
 {
 	return A * !!test() * B + C;
+}
+
+entity self;
+.float evar;
+
+float test_for_fox_3()
+{
+	return A * -self.evar + B;
 }

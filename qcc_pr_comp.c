@@ -4957,8 +4957,6 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 				QCC_UnFreeTemp(e2);
 
 				elsej->a = &statements[numstatements] - elsej;
-				if(e2->temp)
-					QCC_UnFreeTemp(e2);
 				return e2;
 			}
 		}

@@ -1609,7 +1609,7 @@ void QCC_PR_LexWhitespace (void)
 				}
 				if (pr_file_p[1] == 0)
 				{
-					pr_file_p++;
+					pr_file_p += 2;
 					return;
 				}
 				pr_file_p++;

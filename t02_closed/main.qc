@@ -2,9 +2,9 @@ entity self;
 .float mbool;
 .float mvar;
 
-float A = 1;
-float B = 2;
-float C = 3;
+var float A = 1;
+var float B = 2;
+var float C = 3;
 
 float f(...) = #2;
 
@@ -15,7 +15,7 @@ float test()
 
 	if(self.mvar >= 0)
 	{
-		f(A, (self.mbool ? 0.5 : 0), B*x);
+		f(A, (self.mbool ? 0.5 : (C*2+1)), B*x);
 	}
 	// check if the temps are all freed up again
 	/*
