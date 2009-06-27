@@ -10,9 +10,9 @@ float C = 3;
 float DEG2RAD = 0.01745329252;
 
 float f(float x, float y, float z,
-		float a, float b, float c,
-		float n,
-		float P, float Q, float R)
+	float a, float b, float c,
+	float n,
+	float P, float Q, float R)
 {
 	return x+y+z;
 }
