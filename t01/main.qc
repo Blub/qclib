@@ -21,8 +21,13 @@ float test2()
    Probably due to wrong priority parameter to QCC_PR_Expression()?
 
    Result:
-   Unary operators parse full expressions but should call QCC_PR_Temp() (like prefix operators do)
+   Unary operators parse full expressions but should only allow a single statement.
 
-   Applies to -X, +A, !A
-   Fixed those 3, dunno about stuff like &X
+   Applies to -X, +A, !A ... (all of them)
+   Changed NOT_PRIORITY from 5 to 1
  */
+
+float test3()
+{
+	return A * !!test() + C;
+}
