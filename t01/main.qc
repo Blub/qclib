@@ -27,7 +27,12 @@ float test2()
    Changed NOT_PRIORITY from 5 to 1
  */
 
-float test_fix()
+float test_for_fix_1()
 {
 	return A * !!test() + C;
+}
+
+float test_for_fix_2()
+{
+	return A * !!test() * B + C;
 }
