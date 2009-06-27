@@ -1,4 +1,4 @@
-int test()
+float test()
 {
 	return 1;
 }
