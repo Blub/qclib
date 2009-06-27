@@ -1,7 +1,3 @@
-float cvar(string x) = #1;
-
-float f(...) = #2;
-
 var float A = 1;
 var float B = 2;
 var float C = 3;
