@@ -2,18 +2,29 @@ float cvar(string x) = #1;
 
 float f(...) = #2;
 
-float A = 1;
-float B = 2;
-float C = 3;
+var float A = 1;
+var float B = 2;
+var float C = 3;
 
 float test()
 {
-	return f(0, A * -cvar("test") + B, 2);
+	//return A * -B + C;
+	return A * -(B + C);
+}
+
+float test2()
+{
+	return A * -B + C;
 }
 
 /* Description:
-   Wanted:             A * (-cvar(test)) + B
-   Compiled code does: A * -( cvar(test)+B )
+   Wanted:             A * (-B) + C
+   Compiled code does: A * -( B+C )
+
+   test() and test2() generate the same code
 
    Probably due to wrong priority parameter to QCC_PR_Expression()?
+
+   Result:
+   Unary operators parse full expressions but should call QCC_PR_Temp() (like prefix operators do)
  */
