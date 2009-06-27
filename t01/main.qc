@@ -7,5 +7,5 @@ float f(float x, float y, float z)
 
 float test()
 {
-	return -cvar("test");
+	return f(0, 2*-cvar("test"), 2);
 }
