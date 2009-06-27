@@ -1,11 +1,19 @@
 float cvar(string x) = #1;
 
-float f(float x, float y, float z)
-{
-	return x+y+z;
-}
+float f(...) = #2;
+
+float A = 1;
+float B = 2;
+float C = 3;
 
 float test()
 {
-	return f(0, 2*-cvar("test"), 2);
+	return f(0, A * -cvar("test") + B, 2);
 }
+
+/* Description:
+   Wanted:             A * (-cvar(test)) + B
+   Compiled code does: A * -( cvar(test)+B )
+
+   Probably due to wrong priority parameter to QCC_PR_Expression()?
+ */
