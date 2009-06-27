@@ -5,3 +5,7 @@ all:
 	-rm *.lno *.dat *.log
 	@less qc.asm
 	-rm qc.asm
+
+comp:
+	$(QCC)
+	-rm *.lno *.dat *.log

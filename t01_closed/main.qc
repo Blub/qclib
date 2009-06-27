@@ -29,12 +29,12 @@ float test2()
 
 float test_for_fix_1()
 {
-	return A * !!test() + C;
+	return A * !!test() + C; // must warn about parentheses
 }
 
 float test_for_fix_2()
 {
-	return A * !!test() * B + C;
+	return A * !!test() * B + C; // must warn about parentheses
 }
 
 entity self;
