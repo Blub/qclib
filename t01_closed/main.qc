@@ -40,7 +40,14 @@ float test_for_fix_2()
 entity self;
 .float evar;
 
-float test_for_fox_3()
+float test_for_fix_3()
 {
-	return A * -self.evar + B;
+	float x;
+	x = A * (!C) + B; // x = A * !C + B  - no warning
+	return A * !C + B; // return A * !(C + B) - warn
+}
+
+float test_for_fix_4()
+{
+	return A * !self.evar;
 }
