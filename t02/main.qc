@@ -15,12 +15,6 @@ float test()
 
 	if(self.mvar >= 0)
 	{
-		/*
-		f(
-			(self.mbool ? 0.5 : 0),
-			C*x*y
-			);
-		*/
 		f(A, (self.mbool ? 0.5 : 0), B*x);
 	}
 	return 1;
