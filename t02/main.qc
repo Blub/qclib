@@ -17,6 +17,18 @@ float test()
 	{
 		f(A, (self.mbool ? 0.5 : 0), B*x);
 	}
+	// check if the temps are all freed up again
+	/*
+	if(self.mvar >= 0)
+	{
+		f(A, (self.mbool ? 0.5 : 0), B*x);
+	}
+	if(self.mvar >= 0)
+	{
+		f(A, (self.mbool ? 0.5 : 0), B*x);
+	}
+	*/
+	// result: same temps are used over and over, so no temp-leak is created by the fix
 	return 1;
 }
 
