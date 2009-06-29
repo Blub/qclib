@@ -1,0 +1,26 @@
+t01: Unary operator priority
+     Problem: A * -B + C
+     Result:  A * -(B + C)
+
+     NOTE:     for ! (logical not) it is kept for some reason!!!
+
+t02: (?:) Returns freed temp
+     Problem: (?:) is evaluated into temp0 and if used
+     	      in a function call, any arithmetic in a later parameter
+	      overwrites the (?:) parameter.
+     Problem: f(x ? A : B, y * z)
+     Result:  f(y*z, y*z)
+
+t03: not a bug, in A ? B : C, C is greedy and not stopped by commas
+
+t04: After a function call, the current expression level (priority) ends
+     Problem: f(x) ? A : B
+     Result: ? is unexpected by the compiler
+
+t05: Unary operators do not support vectors.
+     Problem: -some_vec
+     Result: type mismatch for -
+     After Implementation:
+     	  Problem: QCC_PR_WriteProgdefs segfaults because vectpr immediates
+	  	   do not have *_x *_y *_z variables.
+     Can easily be avoided.
