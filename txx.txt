@@ -3,19 +3,21 @@ t01: Unary operator priority
      Result:  A * -(B + C)
 
      NOTE:     for ! (logical not) it is kept for some reason!!!
-
+     FIX-DIFF: (ALSO CONTAINT t02): git diff a9e2a45..14430c qcc_pr_comp.c
 t02: (?:) Returns freed temp
      Problem: (?:) is evaluated into temp0 and if used
      	      in a function call, any arithmetic in a later parameter
 	      overwrites the (?:) parameter.
      Problem: f(x ? A : B, y * z)
      Result:  f(y*z, y*z)
+     FIX-DIFF:    git diff 3e46dbb..074e51e
 
 t03: not a bug, in A ? B : C, C is greedy and not stopped by commas
 
 t04: After a function call, the current expression level (priority) ends
      Problem: f(x) ? A : B
      Result: ? is unexpected by the compiler
+     FIX-DIFF:    git diff 3e46dbb..074e51e
 
 t05: Unary operators do not support vectors.
      Problem: -some_vec
@@ -24,3 +26,7 @@ t05: Unary operators do not support vectors.
      	  Problem: QCC_PR_WriteProgdefs segfaults because vectpr immediates
 	  	   do not have *_x *_y *_z variables.
      Can easily be avoided.
+     FIX-DIFF:    git diff a3ac855..06f9f89
+
+Other stuff:
+-) Comment line counting: git diff b5d2a06..1f6119b qcc_pr_lex.c
