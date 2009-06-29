@@ -4934,7 +4934,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			if (QCC_PR_CheckToken ("(") )
 			{
 				qcc_usefulstatement=true;
-				return QCC_PR_ParseFunctionCall (e);
+				e = QCC_PR_ParseFunctionCall (e);
 			}
 			if (QCC_PR_CheckToken ("?"))
 			{
