@@ -3,7 +3,8 @@ t01: Unary operator priority
      Result:  A * -(B + C)
 
      NOTE:     for ! (logical not) it is kept for some reason!!!
-     FIX-DIFF: (ALSO CONTAINT t02): git diff a9e2a45..14430c qcc_pr_comp.c
+     FIX-DIFF: (ALSO CONTAINS t02): git diff a9e2a45..14430c qcc_pr_comp.c
+     
 t02: (?:) Returns freed temp
      Problem: (?:) is evaluated into temp0 and if used
      	      in a function call, any arithmetic in a later parameter
