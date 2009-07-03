@@ -1,7 +1,8 @@
 QCC=../fteqcc.bin
+QCFLAGS ?=
 
 all:
-	$(QCC) -Fwasm
+	$(QCC) -Fwasm $(QCFLAGS)
 	-rm *.lno *.dat *.log
 	@less qc.asm
 	-rm qc.asm
