@@ -29,12 +29,12 @@ float test2()
 
 float test_for_fix_1()
 {
-	return A * !!test() + C; // must warn about parentheses
+	return A * !!test() + C; // must warn about parentheses [works: warning]
 }
 
 float test_for_fix_2()
 {
-	return A * !!test() * B + C; // must warn about parentheses
+	return A * !!test() * B + C; // must warn about parentheses [works: warning]
 }
 
 entity self;
@@ -43,11 +43,11 @@ entity self;
 float test_for_fix_3()
 {
 	float x;
-	x = A * (!C) + B; // x = A * !C + B  - no warning
-	return A * !C + B; // return A * !(C + B) - warn
+	x = A * (!C) + B; // x = A * !C + B  - no warning [works: no warning]
+	return A * !C + B; // return A * !(C + B) - warn  [works: warning]
 }
 
 float test_for_fix_4()
 {
-	return A * !self.evar;
+	return A * !self.evar; // [works: no warning]
 }
