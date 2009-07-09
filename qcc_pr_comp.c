@@ -4773,9 +4773,6 @@ QCC_def_t *QCC_PR_Term (void)
 			case ev_integer:
 				e2 = QCC_PR_Statement (&pr_opcodes[OP_SUB_I], QCC_MakeIntDef(0), e, NULL);
 				break;
-			case ev_vector:
-				e2 = QCC_PR_Statement (&pr_opcodes[OP_SUB_V], QCC_MakeVectorDef(0, 0, 0), e, NULL);
-				break;
 			default:
 				QCC_PR_ParseError (ERR_BADNOTTYPE, "type mismatch for -");
 				e2 = NULL;
@@ -4797,9 +4794,6 @@ QCC_def_t *QCC_PR_Term (void)
 				break;
 			case ev_integer:
 				e2 = e;
-				break;
-			case ev_vector:
-				e2 = QCC_PR_Statement (&pr_opcodes[OP_ADD_V], QCC_MakeVectorDef(0, 0, 0), e, NULL);
 				break;
 			default:
 				QCC_PR_ParseError (ERR_BADNOTTYPE, "type mismatch for +");
