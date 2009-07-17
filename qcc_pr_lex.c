@@ -44,13 +44,13 @@ extern pbool expandedemptymacro;
 
 char	*pr_punctuation[] =
 // longer symbols must be before a shorter partial match
-{"&&", "||", "<=", ">=","==", "!=", "/=", "*=", "+=", "-=", "(+)", "(-)", "|=", "&~=", "++", "--", "->", "::", ";", ",", "!", "*", "/", "(", ")", "-", "+", "=", "[", "]", "{", "}", "...", "..", ".", "<<", "<", ">>", ">" , "?", "#" , "@", "&" , "|", "^", ":", NULL};
+{"&&", "||", "<=", ">=","==", "!=", "/=", "*=", "+=", "-=", "(+)", "(-)", "|=", "&~=", "++", "--", "->", "::", ";", ",", "!", ".*", "*", "/", "(", ")", "-", "+", "=", "[", "]", "{", "}", "...", "..", "\\", ".", "<<", "<", ">>", ">" , "?", "#" , "@", "&" , "|", "^", ":", NULL};
 
 char *pr_punctuationremap[] =	//a nice bit of evilness.
 //(+) -> |=
 //-> -> .
 //(-) -> &~=
-{"&&", "||", "<=", ">=","==", "!=", "/=", "*=", "+=", "-=", "|=",  "&~=", "|=", "&~=", "++", "--", ".", "::", ";", ",", "!", "*", "/", "(", ")", "-", "+", "=", "[", "]", "{", "}", "...", "..", ".", "<<", "<", ">>", ">" , "?", "#" , "@", "&" , "|", "^", ":", NULL};
+{"&&", "||", "<=", ">=","==", "!=", "/=", "*=", "+=", "-=", "|=",  "&~=", "|=", "&~=", "++", "--", ".", "::", ";", ",", "!", ".*", "*", "/", "(", ")", "-", "+", "=", "[", "]", "{", "}", "...", "..", "\\", ".", "<<", "<", ">>", ">" , "?", "#" , "@", "&" , "|", "^", ":", NULL};
 
 // simple types.  function types are dynamically allocated
 QCC_type_t	*type_void;// = {ev_void/*, &def_void*/};
@@ -88,9 +88,7 @@ void QCC_PR_LexWhitespace (void);
 QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
 QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
 QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
-QCC_type_t	*type_shuffle_xyz, *type_shuffle_xzy;
-QCC_type_t	*type_shuffle_yxz, *type_shuffle_yzx;
-QCC_type_t	*type_shuffle_zxy, *type_shuffle_zyx;
+QCC_type_t	*type_shuffle_3;
 
 //for compiler constants and file includes.
 

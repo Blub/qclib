@@ -307,6 +307,8 @@ typedef struct QCC_type_s
 	unsigned int ofs;	//inside a structure.
 	unsigned int size;
 	char *name;
+
+	int sh_ofs[3];		// -1 = unused
 } QCC_type_t;
 int typecmp(QCC_type_t *a, QCC_type_t *b);
 
@@ -374,9 +376,7 @@ extern	QCC_type_t	*type_void, *type_string, *type_float, *type_vector, *type_ent
 extern	QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
 extern	QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
 extern	QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
-extern	QCC_type_t	*type_shuffle_xyz, *type_shuffle_xzy;
-extern	QCC_type_t	*type_shuffle_yxz, *type_shuffle_yzx;
-extern	QCC_type_t	*type_shuffle_zxy, *type_shuffle_zyx;
+extern	QCC_type_t	*type_shuffle_3;
 
 struct QCC_function_s
 {

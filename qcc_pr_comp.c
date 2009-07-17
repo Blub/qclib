@@ -589,6 +589,8 @@ pbool OpAssignedTo(QCC_def_t *v, unsigned int op)
 //conditional and/or
 #define CONDITION_PRIORITY 7
 
+#define COMP_MUL_PRIORITY 4
+#define VEC_MEM_PRIORITY 1
 
 //this system cuts out 10/120
 //these evaluate as top first.
@@ -1234,6 +1236,18 @@ static QCC_def_t *CopyDef(QCC_def_t *def)
 		cp->temp = qccHunkAlloc(sizeof(*cp->temp));
 		memcpy(cp->temp, def->temp, sizeof(*cp->temp));
 	}
+	return cp;
+}
+
+static QCC_type_t *ShuffleType(int ofs1, int ofs2, int ofs3)
+{
+	QCC_type_t *cp;
+
+	cp = (void*)qccHunkAlloc(sizeof(*cp));
+	memcpy(cp, type_shuffle_3, sizeof(*cp));
+	cp->sh_ofs[0] = ofs1;
+	cp->sh_ofs[1] = ofs2;
+	cp->sh_ofs[2] = ofs3;
 	return cp;
 }
 
@@ -3410,7 +3424,7 @@ QCC_def_t *QCC_PR_ParseFunctionCall (QCC_def_t *func)	//warning, the func could 
 				fprintf(stdout, "float\n");
 			else
 				fprintf(stdout, "unknown\n");
-			return QCC_MakeIntDef(0);
+			return QCC_MakeFloatDef(0);
 		}
 	}	//so it's not an intrinsic.
 
@@ -4075,34 +4089,31 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 	{
 		// this is the vector itself
 	}
-	else if(!strcmp(name, "xzy"))
-	{
-		d = CopyDef(d);
-		d->type = type_shuffle_xzy;
-	}
-	else if(!strcmp(name, "yxz"))
-	{
-		d = CopyDef(d);
-		d->type = type_shuffle_yxz;
-	}
-	else if(!strcmp(name, "yzx"))
-	{
-		d = CopyDef(d);
-		d->type = type_shuffle_yzx;
-	}
-	else if(!strcmp(name, "zxy"))
-	{
-		d = CopyDef(d);
-		d->type = type_shuffle_zxy;
-	}
-	else if(!strcmp(name, "zyx"))
-	{
-		d = CopyDef(d);
-		d->type = type_shuffle_zyx;
-	}
 	else
 	{
-		QCC_PR_ParseError (ERR_MEMBERNOTVALID, "\"%s\" is not a member of \"vector\"", pr_token);
+		if(strlen(name) == 3)
+		{
+			int i;
+			int ofs[3];
+			for (i = 0; i < 3; ++i)
+			{
+				switch(name[i])
+				{
+					case 'x': ofs[i] = 0; break;
+					case 'y': ofs[i] = 1; break;
+					case 'z': ofs[i] = 2; break;
+					case 'o': ofs[i] = 3; break;
+					default:
+						QCC_PR_ParseError (ERR_MEMBERNOTVALID, "\"%c\" is not a member of \"vector\"", name[i]);
+						return d;
+						break;
+				}
+			}
+			d = CopyDef(d);
+			d->type = ShuffleType(ofs[0], ofs[1], ofs[2]);
+		}
+		else
+			QCC_PR_ParseError (ERR_MEMBERNOTVALID, "\"%s\" is not a member of \"vector\"", pr_token);
 	}
 	return d;
 }
@@ -4726,7 +4737,7 @@ reloop:
 	}
 	if (d->type->type == ev_vector)
 	{
-		if (QCC_PR_CheckToken("."))
+		if (QCC_PR_CheckToken("\\"))
 		{
 			char *name = QCC_PR_ParseName();
 			d = QCC_PR_ParseVectorMember(name, d);
@@ -5094,7 +5105,7 @@ static void QCC_Shuffle(QCC_type_t *sh, QCC_def_t *base, QCC_def_t **x, QCC_def_
 		(*y)->ofs += 1;
 		if((*y)->temp) (*y)->temp->ofs += 1;
 	}
-	else if(sh == type_shuffle_xyz || sh == type_vector)
+	else if(/*sh == type_shuffle_xyz || */sh == type_vector)
 	{
 		(*x) = CopyDef(base);
 		(*y) = CopyDef(base);
@@ -5104,55 +5115,26 @@ static void QCC_Shuffle(QCC_type_t *sh, QCC_def_t *base, QCC_def_t **x, QCC_def_
 		if((*y)->temp) (*y)->temp->ofs += 1;
 		if((*z)->temp) (*z)->temp->ofs += 2;
 	}
-	else if(sh == type_shuffle_xzy)
+	else if(sh->type == ev_shuffle3)
 	{
-		(*x) = CopyDef(base);
-		(*y) = CopyDef(base);
-		(*z) = CopyDef(base);
-		(*y)->ofs += 2;
-		(*z)->ofs += 1;
-		if((*y)->temp) (*y)->temp->ofs += 2;
-		if((*z)->temp) (*z)->temp->ofs += 1;
-	}
-	else if(sh == type_shuffle_yxz)
-	{
-		(*x) = CopyDef(base);
-		(*y) = CopyDef(base);
-		(*z) = CopyDef(base);
-		(*x)->ofs += 1;
-		(*z)->ofs += 2;
-		if((*x)->temp) (*x)->temp->ofs += 1;
-		if((*z)->temp) (*z)->temp->ofs += 2;
-	}
-	else if(sh == type_shuffle_yzx)
-	{
-		(*x) = CopyDef(base);
-		(*y) = CopyDef(base);
-		(*z) = CopyDef(base);
-		(*x)->ofs += 2;
-		(*z)->ofs += 1;
-		if((*x)->temp) (*x)->temp->ofs += 2;
-		if((*z)->temp) (*z)->temp->ofs += 1;
-	}
-	else if(sh == type_shuffle_zxy)
-	{
-		(*x) = CopyDef(base);
-		(*y) = CopyDef(base);
-		(*z) = CopyDef(base);
-		(*x)->ofs += 1;
-		(*y)->ofs += 2;
-		if((*x)->temp) (*x)->temp->ofs += 1;
-		if((*y)->temp) (*y)->temp->ofs += 2;
-	}
-	else if(sh == type_shuffle_zyx)
-	{
-		(*x) = CopyDef(base);
-		(*y) = CopyDef(base);
-		(*z) = CopyDef(base);
-		(*x)->ofs += 2;
-		(*y)->ofs += 1;
-		if((*x)->temp) (*x)->temp->ofs += 2;
-		if((*y)->temp) (*y)->temp->ofs += 1;
+		if(sh->sh_ofs[0] >= 0)
+		{
+			(*x) = CopyDef(base);
+			(*x)->ofs += sh->sh_ofs[0];
+			if((*x)->temp) (*x)->temp->ofs += sh->sh_ofs[0];
+		}
+		if(sh->sh_ofs[1] >= 0)
+		{
+			(*y) = CopyDef(base);
+			(*y)->ofs += sh->sh_ofs[1];
+			if((*y)->temp) (*y)->temp->ofs += sh->sh_ofs[1];
+		}
+		if(sh->sh_ofs[2] >= 0)
+		{
+			(*z) = CopyDef(base);
+			(*z)->ofs += sh->sh_ofs[2];
+			if((*z)->temp) (*z)->temp->ofs += sh->sh_ofs[2];
+		}
 	}
 	if(*x) (*x)->type = type_float;
 	if(*y) (*y)->type = type_float;
@@ -5210,12 +5192,43 @@ QCC_def_t *QCC_ShuffleAssign(QCC_def_t *e, QCC_def_t *e2)
 		{
 			QCC_def_t *t = QCC_GetTemp(type_vector);
 			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_V], e2, t, NULL));
+			e2_x = e2_y = e2_z = NULL;
 			QCC_Shuffle(e2->type, t, &e2_x, &e2_y, &e2_z);
 			//e2 = t;
 		}
-		QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_x, e_x, NULL));
-		QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_y, e_y, NULL));
-		QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_z, e_z, NULL));
+		if(e_x)
+		{
+			if((e_y && e_x->ofs == e_y->ofs) ||
+			   (e_z && e_x->ofs == e_z->ofs))
+			{
+				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+			}
+			if(!e2_x)
+				e2_x = QCC_MakeFloatDef(0);
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_x, e_x, NULL));
+		}
+		if(e_y)
+		{
+			if((e_x && e_y->ofs == e_x->ofs) ||
+			   (e_z && e_y->ofs == e_z->ofs))
+			{
+				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+			}
+			if(!e2_y)
+				e2_y = QCC_MakeFloatDef(0);
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_y, e_y, NULL));
+		}
+		if(e_z)
+		{
+			if((e_x && e_z->ofs == e_x->ofs) ||
+			   (e_y && e_z->ofs == e_y->ofs))
+			{
+				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+			}
+			if(!e2_z)
+				e2_z = QCC_MakeFloatDef(0);
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_z, e_z, NULL));
+		}
 	}
 	else
 		QCC_PR_ParseError(ERR_INTERNAL, "invalid size for shuffle!\n");
@@ -5304,10 +5317,16 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 		{
 //			if (op->priority != priority)
 //				continue;
-			if (!QCC_PR_CheckToken (op->name))
+			if(priority == COMP_MUL_PRIORITY && QCC_PR_CheckToken(".*"))
+			{
+			}
+			else if(priority == VEC_MEM_PRIORITY && QCC_PR_CheckToken("\\"))
+			{
+			}
+			else if (!QCC_PR_CheckToken (op->name))
 				continue;
 
-			if (!strcmp(op->name, ".") && e->type->type == ev_vector)
+			if (QCC_PR_CheckToken("\\") && e->type->type == ev_vector || e->type->type == ev_shuffle3)
 			{
 				char *mem = QCC_PR_ParseName();
 				e = QCC_PR_ParseVectorMember(mem, e);
@@ -5401,6 +5420,24 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 					e2 = QCC_ShuffleAssign(tmp, e2);
 				}
 				type_c = ev_void;
+			}
+			// AFTER having it shuffled we can insert other operators like .*
+			if(!strcmp(op->name, ".*"))
+			{
+				// component wise multiplication
+				QCC_def_t *res = QCC_GetTemp(type_vector);
+				qcc_usefulstatement = true;
+				QCC_def_t *x, *y, *z;
+				QCC_def_t *e_x, *e_y, *e_z;
+				QCC_def_t *e2_x, *e2_y, *e2_z;
+				QCC_Shuffle(type_vector, res, &x, &y, &z);
+				QCC_Shuffle(type_vector, e, &e_x, &e_y, &e_z);
+				QCC_Shuffle(type_vector, e2, &e2_x, &e2_y, &e2_z);
+				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_x, e2_x, x);
+				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_y, e2_y, y);
+				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_z, e2_z, z);
+				QCC_UnFreeTemp(res);
+				continue;
 			}
 				
 			oldop = op;

@@ -6,7 +6,7 @@ vector whatever(float x)
 {
 	vector a;
 	a = '2 0 2';
-	a.y = x;
+	a\y = x;
 	return a;
 }
 
@@ -19,15 +19,19 @@ float test()
 
 	__VARINFO(x + y);
 	__VARINFO(x + y);
-	__VARINFO((x + y).y);
+	__VARINFO((x + y)\y);
 	__VARINFO(x);
 	__VARINFO(x_z);
-	__VARINFO(x.z);
+	__VARINFO(x\z);
 
-	return whatever(3).y;
-	x.xyz = y.zyx;
-	x.xy = x.yx;
-	x.xyz = x.zyx;
+	return whatever(3)\y;
+	x\xyz = y\zyx;
+	x\xy = x\yx;
+	x\xyz = x\zyx;
 
-	x = x.zyx + y.yzx;
+	x = x\zyx + y\yzx;
+	x = x\yzx * 3;
+
+	return 3;
+	x = x .* y;
 }
