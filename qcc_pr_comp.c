@@ -4102,7 +4102,7 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 					case 'x': ofs[i] = 0; break;
 					case 'y': ofs[i] = 1; break;
 					case 'z': ofs[i] = 2; break;
-					case 'o': ofs[i] = 3; break;
+					case 'o': ofs[i] = -1; break;
 					default:
 						QCC_PR_ParseError (ERR_MEMBERNOTVALID, "\"%c\" is not a member of \"vector\"", name[i]);
 						return d;
@@ -4740,8 +4740,11 @@ reloop:
 		if (QCC_PR_CheckToken("\\"))
 		{
 			char *name = QCC_PR_ParseName();
+			fprintf(stderr, "retrieving member (II): %s\n", name);
 			d = QCC_PR_ParseVectorMember(name, d);
-			goto reloop;
+			fprintf(stderr, "type: %i\n", d->type->type);
+			QCC_PR_Lex();
+			return d;
 		}
 	}
 
@@ -5159,7 +5162,7 @@ QCC_def_t *QCC_ShuffleAssign(QCC_def_t *e, QCC_def_t *e2)
 	if(e->type->type != e2->type->type)
 	{
 		// in this case, we can only use a vector with a 3-part shuffle
-		if(e->type->size != e2->type->size)
+		if(e->type->size != e2->type->size && e2->type->type != ev_float)
 		{
 			QCC_PR_ParseError(0, "size-mismatch in shuffling operand sizes: %i != %i\n",
 					  e->type->size, e2->type->size);
@@ -5169,9 +5172,17 @@ QCC_def_t *QCC_ShuffleAssign(QCC_def_t *e, QCC_def_t *e2)
 
 	// QCC_Shuffle handles type_vector, too
 	QCC_Shuffle(e->type, e, &e_x, &e_y, &e_z);
-	QCC_Shuffle(e2->type, e2, &e2_x, &e2_y, &e2_z);
+	if(e2->type->type != ev_float)
+		QCC_Shuffle(e2->type, e2, &e2_x, &e2_y, &e2_z);
 	if(e->type->size == 2)
 	{
+		if(e2->type->type == ev_float)
+		{
+			QCC_PR_ParseError(0, "size-mismatch in shuffling operand sizes: %i != %i\n",
+					  e->type->size, e2->type->size);
+			return e;
+		}
+		
 		if(e_z || e2_z)
 		{
 			QCC_PR_ParseError(ERR_INTERNAL, "shuffling variable mismatch!\n");
@@ -5189,46 +5200,77 @@ QCC_def_t *QCC_ShuffleAssign(QCC_def_t *e, QCC_def_t *e2)
 	}
 	else if(e->type->size == 3)
 	{
-		if(e->ofs == e2->ofs)
+		if(e2->type->type != ev_float)
 		{
-			QCC_def_t *t = QCC_GetTemp(type_vector);
-			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_V], e2, t, NULL));
-			e2_x = e2_y = e2_z = NULL;
-			QCC_Shuffle(e2->type, t, &e2_x, &e2_y, &e2_z);
-			//e2 = t;
-		}
-		if(e_x)
-		{
-			if((e_y && e_x->ofs == e_y->ofs) ||
-			   (e_z && e_x->ofs == e_z->ofs))
+			if(e->ofs == e2->ofs)
 			{
-				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				QCC_def_t *t = QCC_GetTemp(type_vector);
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_V], e2, t, NULL));
+				e2_x = e2_y = e2_z = NULL;
+				QCC_Shuffle(e2->type, t, &e2_x, &e2_y, &e2_z);
+				//e2 = t;
 			}
-			if(!e2_x)
-				e2_x = QCC_MakeFloatDef(0);
-			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_x, e_x, NULL));
-		}
-		if(e_y)
-		{
-			if((e_x && e_y->ofs == e_x->ofs) ||
-			   (e_z && e_y->ofs == e_z->ofs))
+			if(e_x)
 			{
-				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				if((e_y && e_x->ofs == e_y->ofs) ||
+				   (e_z && e_x->ofs == e_z->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				if(!e2_x)
+					e2_x = QCC_MakeFloatDef(0);
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_x, e_x, NULL));
 			}
-			if(!e2_y)
-				e2_y = QCC_MakeFloatDef(0);
-			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_y, e_y, NULL));
-		}
-		if(e_z)
-		{
-			if((e_x && e_z->ofs == e_x->ofs) ||
-			   (e_y && e_z->ofs == e_y->ofs))
+			if(e_y)
 			{
-				QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				if((e_x && e_y->ofs == e_x->ofs) ||
+				   (e_z && e_y->ofs == e_z->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				if(!e2_y)
+					e2_y = QCC_MakeFloatDef(0);
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_y, e_y, NULL));
 			}
-			if(!e2_z)
-				e2_z = QCC_MakeFloatDef(0);
-			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_z, e_z, NULL));
+			if(e_z)
+			{
+				if((e_x && e_z->ofs == e_x->ofs) ||
+				   (e_y && e_z->ofs == e_y->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				if(!e2_z)
+					e2_z = QCC_MakeFloatDef(0);
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2_z, e_z, NULL));
+			}
+		} else {
+			if(e_x)
+			{
+				if((e_y && e_x->ofs == e_y->ofs) ||
+				   (e_z && e_x->ofs == e_z->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2, e_x, NULL));
+			}
+			if(e_y)
+			{
+				if((e_x && e_y->ofs == e_x->ofs) ||
+				   (e_z && e_y->ofs == e_z->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2, e_y, NULL));
+			}
+			if(e_z)
+			{
+				if((e_x && e_z->ofs == e_x->ofs) ||
+				   (e_y && e_z->ofs == e_y->ofs))
+				{
+					QCC_PR_ParseWarning(WARN_ERROR, "Multiple assignment to same members.");
+				}
+				QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], e2, e_z, NULL));
+			}
 		}
 	}
 	else
@@ -5330,6 +5372,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			if (QCC_PR_CheckToken("\\") && (e->type->type == ev_vector || e->type->type == ev_shuffle3))
 			{
 				char *mem = QCC_PR_ParseName();
+				fprintf(stderr, "retrieving member: %s\n", mem);
 				e = QCC_PR_ParseVectorMember(mem, e);
 				break;
 			}

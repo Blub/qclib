@@ -17,14 +17,7 @@ float test()
 	x = '3 4 3';
 	y = '1 1 0';
 
-	__VARINFO(x + y);
-	__VARINFO(x + y);
-	__VARINFO((x + y)\y);
-	__VARINFO(x);
-	__VARINFO(x_z);
-	__VARINFO(x\z);
-
-	return whatever(3)\y;
+	return whatever(128)\y;
 	x\xyz = y\zyx;
 	x\xy = x\yx;
 	x\xyz = x\zyx;
@@ -34,4 +27,6 @@ float test()
 
 	return 3;
 	x = x .* y;
+	x\yxo = 9;
+	return 3;
 }
