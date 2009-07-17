@@ -12,7 +12,7 @@ all: qcc
 
 USEGUI_CFLAGS=
 # set to -DUSEGUI when compiling the GUI
-BASE_CFLAGS=-ggdb $(USEGUI_CFLAGS)
+BASE_CFLAGS=-ggdb $(USEGUI_CFLAGS) -DSIMPLE_TESTCASES
 
 DO_CC=$(CC) $(BASE_CFLAGS) -o $@ -c $< $(CFLAGS)
 

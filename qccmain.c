@@ -1786,7 +1786,12 @@ unsigned short QCC_PR_WriteProgdefs (char *filename)
 			break;
 		case ev_vector:
 			ADD(qcva("\tvec3_t\t%s;\n",d->name));
-			d=d->next->next->next;	// skip the elements
+#ifdef SIMPLE_TESTCASES
+			// Do not crash when simple testcases without a global-end-system-field definitions
+			// use vectors!
+			if(strcmp(d->name, "IMMEDIATE"))
+#endif
+				d=d->next->next->next;	// skip the elements
 			break;
 		case ev_string:
 			ADD(qcva("\tstring_t\t%s;\n",d->name));
@@ -1826,7 +1831,12 @@ unsigned short QCC_PR_WriteProgdefs (char *filename)
 			break;
 		case ev_vector:
 			ADD(qcva("\tvec3_t\t%s;\n",d->name));
-			d=d->next->next->next;	// skip the elements
+#ifdef SIMPLE_TESTCASES
+			// Do not crash when simple testcases without a global-end-system-field definitions
+			// use vectors!
+			if(strcmp(d->name, "IMMEDIATE"))
+#endif
+				d=d->next->next->next;	// skip the elements
 			break;
 		case ev_string:
 			ADD(qcva("\tstring_t\t%s;\n",d->name));
