@@ -590,7 +590,7 @@ pbool OpAssignedTo(QCC_def_t *v, unsigned int op)
 #define CONDITION_PRIORITY 7
 
 #define COMP_MUL_PRIORITY 4
-#define VEC_MEM_PRIORITY 1
+#define VEC_MEM_PRIORITY 4
 
 //this system cuts out 10/120
 //these evaluate as top first.
@@ -4741,6 +4741,7 @@ reloop:
 		{
 			char *name = QCC_PR_ParseName();
 			d = QCC_PR_ParseVectorMember(name, d);
+			goto reloop;
 		}
 	}
 
@@ -5326,10 +5327,11 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			else if (!QCC_PR_CheckToken (op->name))
 				continue;
 
-			if (QCC_PR_CheckToken("\\") && e->type->type == ev_vector || e->type->type == ev_shuffle3)
+			if (QCC_PR_CheckToken("\\") && (e->type->type == ev_vector || e->type->type == ev_shuffle3))
 			{
 				char *mem = QCC_PR_ParseName();
 				e = QCC_PR_ParseVectorMember(mem, e);
+				fprintf(stdout, "type: %i\n", e->type->type);
 				break;
 			}
 
