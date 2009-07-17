@@ -4104,31 +4104,30 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 	if(!strcmp(name, "x"))
 	{
 		d = CopyDef(d);
-		d->type = type_float;
 		if(d->type->type == ev_shuffle3 || d->type->type == ev_shuffle2)
 		{
 			if(d->type->sh_ofs[0] == -1)
 				QCC_PR_ParseError(ERR_BADSHUFFLE, "member x has been shuffled out.");
 			QCC_AddOfs(d, d->type->sh_ofs[0]);
 		}
+		d->type = type_float;
 	}
 	else if(!strcmp(name, "y"))
 	{
 		d = CopyDef(d);
-		d->type = type_float;
-		QCC_AddOfs(d, 1);
 		if(d->type->type == ev_shuffle3 || d->type->type == ev_shuffle2)
 		{
 			if(d->type->sh_ofs[1] == -1)
 				QCC_PR_ParseError(ERR_BADSHUFFLE, "member y has been shuffled out.");
 			QCC_AddOfs(d, d->type->sh_ofs[1]);
 		}
+		else
+			QCC_AddOfs(d, 1);
+		d->type = type_float;
 	}
 	else if(!strcmp(name, "z"))
 	{
 		d = CopyDef(d);
-		d->type = type_float;
-		QCC_AddOfs(d, 2);
 		if(d->type->type == ev_shuffle2)
 			QCC_PR_ParseError(ERR_BADSHUFFLE, "size-2 shuffle has no 'z' member.");
 		if(d->type->type == ev_shuffle3)
@@ -4137,6 +4136,9 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 				QCC_PR_ParseError(ERR_BADSHUFFLE, "member y has been shuffled out.");
 			QCC_AddOfs(d, d->type->sh_ofs[2]);
 		}
+		else
+			QCC_AddOfs(d, 2);
+		d->type = type_float;
 	}
 	else if(strlen(name) == 2)
 	{
@@ -4817,11 +4819,10 @@ reloop:
 	}
 	if (d->type->type == ev_vector)
 	{
-		if (QCC_PR_CheckToken("\\"))
+		while (QCC_PR_CheckToken("\\"))
 		{
 			char *name = QCC_PR_ParseName();
 			d = QCC_PR_ParseVectorMember(name, d);
-			goto reloop;
 		}
 	}
 

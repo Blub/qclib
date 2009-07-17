@@ -41,6 +41,8 @@ float test()
 	dummy(9);
 	x = whatever(32)\zxx; // works
 	dummy(10);
-	x = vec3(3, 4, 5);
+	x = vec3(3, 4, 5); // works
+	dummy(11);
+	x\zy\x = 3;
 	return 99;
 }
