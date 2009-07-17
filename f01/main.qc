@@ -24,10 +24,10 @@ float test()
 	dummy(2);
 	x\xyz = y\zxx; // works
 	dummy(3);
-	x\x = whatever(128)\y;
+	x\x = whatever(128)\y; // works
 	dummy(4);
-	f = (x + y)\y;
+	f = (x + y)\y; // works
 	dummy(5);
-	x\zyx\yzy = 3;
+	x\zyx\yzy = 3; // works and prints the correct warning
 	return 99;
 }
