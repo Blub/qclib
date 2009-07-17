@@ -36,4 +36,4 @@ clean:
 	@echo done
 
 check-clean:
-	-rm *.asm
+	-rm pass/*.asm
