@@ -2,6 +2,7 @@
 // about the passed parameter.
 void __VARINFO() = #1;
 void dummy(...) = #2;
+vector vec3(float, float, float);
 
 vector whatever(float x)
 {
@@ -39,5 +40,7 @@ float test()
 	x\xy = x\yx; // works, uses a temp to do real swapping
 	dummy(9);
 	x = whatever(32)\zxx; // works
+	dummy(10);
+	x = vec3(3, 4, 5);
 	return 99;
 }

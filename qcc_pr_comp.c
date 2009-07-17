@@ -187,6 +187,8 @@ QCC_def_t *extra_parms[MAX_EXTRA_PARMS];
 
 #define ASSOC_RIGHT_RESULT ASSOC_RIGHT
 
+static void QCC_Shuffle(QCC_type_t *sh, QCC_def_t *base, QCC_def_t **x, QCC_def_t **y, QCC_def_t **z);
+
 //========================================
 
 //FIXME: modifiy list so most common GROUPS are first
@@ -2994,6 +2996,51 @@ QCC_def_t *QCC_PR_ParseFunctionCall (QCC_def_t *func)	//warning, the func could 
 		callconvention = OP_CALL1;	//standard
 
 	t = func->type;
+
+	// overriding intrinsics (only if the return type matches)
+	if(!strcmp(func->name, "vec3"))
+	{
+		QCC_def_t *x, *y, *z;
+		x = QCC_PR_Expression(TOP_PRIORITY, EXPR_DISALLOW_COMMA);
+		if(x->type->type != ev_float)
+		{
+			QCC_PR_ParseError(ERR_TYPEMISMATCHPARM, "vec3(): parameter mismatch on parm 1");
+			return QCC_MakeVectorDef(0, 0, 0);
+		}
+		QCC_PR_Expect(",");
+		y = QCC_PR_Expression(TOP_PRIORITY, EXPR_DISALLOW_COMMA);
+		if(y->type->type != ev_float)
+		{
+			QCC_PR_ParseError(ERR_TYPEMISMATCHPARM, "vec3(): parameter mismatch on parm 1");
+			return QCC_MakeVectorDef(0, 0, 0);
+		}
+		QCC_PR_Expect(",");
+		z = QCC_PR_Expression(TOP_PRIORITY, EXPR_DISALLOW_COMMA);
+		if(z->type->type != ev_float)
+		{
+			QCC_PR_ParseError(ERR_TYPEMISMATCHPARM, "vec3(): parameter mismatch on parm 1");
+			return QCC_MakeVectorDef(0, 0, 0);
+		}
+		QCC_PR_Expect(")");
+		if(x->initialized && y->initialized && z->initialized &&
+		   x->constant && y->constant && z->constant)
+		{
+			// don't warn, as the parameters might be macros too
+			//QCC_PR_ParseWarn(WARN_ERROR, "vec3(): only constant parameters used");
+			return QCC_MakeVectorDef(G_FLOAT(x->ofs), G_FLOAT(y->ofs), G_FLOAT(z->ofs));
+		}
+		else
+		{
+			e = QCC_GetTemp(type_vector);
+			QCC_def_t *vx, *vy, *vz;
+			QCC_Shuffle(type_vector, e, &vx, &vy, &vz);
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], x, vx, NULL));
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], y, vy, NULL));
+			QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_STORE_F], z, vz, NULL));
+			QCC_UnFreeTemp(e);
+			return e;
+		}
+	}
 
 	if (t->type == ev_variant)
 	{
