@@ -5331,7 +5331,6 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			{
 				char *mem = QCC_PR_ParseName();
 				e = QCC_PR_ParseVectorMember(mem, e);
-				fprintf(stdout, "type: %i\n", e->type->type);
 				break;
 			}
 
