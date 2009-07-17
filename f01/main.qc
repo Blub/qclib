@@ -19,6 +19,7 @@ float test()
 	x = '3 4 3';
 	y = '1 1 0';
 
+	// the dummy function helps finding the individual cases in the asm output
 	dummy(1);
 	x\xzy = 3; // works
 	dummy(2);
@@ -30,7 +31,11 @@ float test()
 	dummy(5);
 	x\zyx\yzy = 3; // works and prints the correct warning
 	dummy(6);
-	x\xzo = 3;
+	x\xzo = 3; // those 2 work, too
 	x\y = 9;
+	dummy(7);
+	x\xz = y\zx; // works
+	dummy(8);
+	x\xy = x\yx; // works, uses a temp to do real swapping
 	return 99;
 }
