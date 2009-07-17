@@ -2,6 +2,14 @@
 // about the passed parameter.
 void __VARINFO();
 
+vector whatever(float x)
+{
+	vector a;
+	a = '2 0 2';
+	a.y = x;
+	return a;
+}
+
 float test()
 {
 	local vector x;

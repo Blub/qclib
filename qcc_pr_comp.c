@@ -4632,27 +4632,28 @@ reloop:
 		if (QCC_PR_CheckToken(".") || QCC_PR_CheckToken("->"))
 		{
 			char *name = QCC_PR_ParseName();
-			QCC_def_t *dy;
 			if(!strcmp(name, "x"))
 			{
+				d = CopyDef(d);
+				d->type = type_float;
 				goto reloop;
 			}
 			else if(!strcmp(name, "y"))
 			{
-				dy = CopyDef(d);
-				dy->ofs++;
-				if(dy->temp)
-					dy->ofs++;
-				d = dy;
+				d = CopyDef(d);
+				d->type = type_float;
+				d->ofs++;
+				if(d->temp)
+					d->ofs++;
 				goto reloop;
 			}
 			else if(!strcmp(name, "z"))
 			{
-				dy = CopyDef(d);
-				dy->ofs += 2;
-				if(dy->temp)
-					dy->ofs += 2;
-				d = dy;
+				d = CopyDef(d);
+				d->type = type_float;
+				d->ofs += 2;
+				if(d->temp)
+					d->ofs += 2;
 				goto reloop;
 			}
 		}
