@@ -1223,6 +1223,20 @@ void QCC_FreeOffset(gofs_t ofs, unsigned int size)
 	return;
 }
 
+static QCC_def_t *CopyDef(QCC_def_t *def)
+{
+	QCC_def_t *cp;
+
+	cp = (void*)qccHunkAlloc(sizeof(*cp));
+	memcpy(cp, def, sizeof(*cp));
+	if(def->temp)
+	{
+		cp->temp = qccHunkAlloc(sizeof(*cp->temp));
+		memcpy(cp->temp, def->temp, sizeof(*cp->temp));
+	}
+	return cp;
+}
+
 static QCC_def_t *QCC_GetTemp(QCC_type_t *type)
 {
 //#define CRAZYTEMPOPTS //not worth it. saves 2 temps with hexen2 (without even touching numpr_globals)
@@ -3381,6 +3395,23 @@ QCC_def_t *QCC_PR_ParseFunctionCall (QCC_def_t *func)	//warning, the func could 
 
 			return e;
 		}
+		else if(!strcmp(func->name, "__VARINFO") && !QCC_PR_CheckToken(")"))
+		{
+			e = QCC_PR_Expression(TOP_PRIORITY, EXPR_DISALLOW_COMMA);
+			QCC_PR_Expect(")");
+			fprintf(stdout, "VARINFO:\n");
+			fprintf(stdout, "ofs: %u\n", e->ofs);
+			fprintf(stdout, "temp: %i\n", (e->temp != 0));
+			if(e->temp)
+				fprintf(stdout, "temp->ofs: %u\n", e->temp->ofs);
+			if(e->type == type_vector)
+				fprintf(stdout, "vector\n");
+			else if(e->type == type_float)
+				fprintf(stdout, "float\n");
+			else
+				fprintf(stdout, "unknown\n");
+			return QCC_MakeIntDef(0);
+		}
 	}	//so it's not an intrinsic.
 
 	if (opt_precache_file)	//should we strip out all precache_file calls?
@@ -4595,7 +4626,37 @@ reloop:
 			else
 				QCC_PR_IncludeChunk(".", false, NULL);
 		}
-	}	
+	}
+	if (d->type->type == ev_vector)
+	{
+		if (QCC_PR_CheckToken(".") || QCC_PR_CheckToken("->"))
+		{
+			char *name = QCC_PR_ParseName();
+			QCC_def_t *dy;
+			if(!strcmp(name, "x"))
+			{
+				goto reloop;
+			}
+			else if(!strcmp(name, "y"))
+			{
+				dy = CopyDef(d);
+				dy->ofs++;
+				if(dy->temp)
+					dy->ofs++;
+				d = dy;
+				goto reloop;
+			}
+			else if(!strcmp(name, "z"))
+			{
+				dy = CopyDef(d);
+				dy->ofs += 2;
+				if(dy->temp)
+					dy->ofs += 2;
+				d = dy;
+				goto reloop;
+			}
+		}
+	}
 
 	return d;
 }
@@ -4993,6 +5054,41 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 //				continue;
 			if (!QCC_PR_CheckToken (op->name))
 				continue;
+
+			if (!strcmp(op->name, ".") && e->type->type == ev_vector)
+			{
+				char *mem = QCC_PR_ParseName();
+				if(!strcmp(mem, "x"))
+				{
+					e = CopyDef(e);
+					e->type = type_float;
+					break;
+				}
+				else if(!strcmp(mem, "y"))
+				{
+					e = CopyDef(e);
+					e->type = type_float;
+					e->ofs++;
+					if(e->temp)
+						e->temp->ofs++;
+					break;
+				}
+				else if(!strcmp(mem, "z"))
+				{
+					e = CopyDef(e);
+					e->type = type_float;
+					e->ofs += 2;
+					if(e->temp)
+						e->temp->ofs += 2;
+					break;
+				}
+				else
+				{
+					QCC_PR_ParseError (ERR_TYPEMISMATCH, "vector has no member named %s", mem);
+					break;
+				}
+			}
+
 			st = NULL;
 			if ( op->associative!=ASSOC_LEFT )
 			{
@@ -5119,7 +5215,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 							if (c == 0)//can't get less conversions than 0...
 								break;
 						}
-					}				
+					}
 					else
 						break;
 				}
