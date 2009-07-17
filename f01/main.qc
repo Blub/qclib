@@ -28,4 +28,6 @@ float test()
 	x.xyz = y.zyx;
 	x.xy = x.yx;
 	x.xyz = x.zyx;
+
+	x = x.zyx + y.yzx;
 }
