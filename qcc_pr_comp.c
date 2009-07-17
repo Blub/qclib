@@ -590,7 +590,8 @@ pbool OpAssignedTo(QCC_def_t *v, unsigned int op)
 #define CONDITION_PRIORITY 7
 
 #define COMP_MUL_PRIORITY 4
-#define VEC_MEM_PRIORITY 4
+#define COMP_MUL_BASE_OP "+"
+#define VEC_MEM_PRIORITY 1
 
 //this system cuts out 10/120
 //these evaluate as top first.
@@ -4743,8 +4744,7 @@ reloop:
 			fprintf(stderr, "retrieving member (II): %s\n", name);
 			d = QCC_PR_ParseVectorMember(name, d);
 			fprintf(stderr, "type: %i\n", d->type->type);
-			QCC_PR_Lex();
-			return d;
+			goto reloop;
 		}
 	}
 
@@ -5360,10 +5360,10 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 		{
 //			if (op->priority != priority)
 //				continue;
-			if(priority == COMP_MUL_PRIORITY && QCC_PR_CheckToken(".*"))
+			if(priority == COMP_MUL_PRIORITY && QCC_PR_CheckToken(".*") && !strcmp(op->name, COMP_MUL_BASE_OP))
 			{
 			}
-			else if(priority == VEC_MEM_PRIORITY && QCC_PR_CheckToken("\\"))
+			else if(priority == VEC_MEM_PRIORITY && !strcmp(pr_token, "\\"))
 			{
 			}
 			else if (!QCC_PR_CheckToken (op->name))
