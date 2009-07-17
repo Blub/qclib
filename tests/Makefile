@@ -16,7 +16,7 @@ testsuite = \
 
 all: $(patsubst %,check-%,$(testsuite))
 
-passall: $(patsubst %,pass-%.asm,$(testsuite))
+passall: $(patsubst %,pass/%.asm,$(testsuite))
 
 %.asm: %.qc
 	@echo "test.dat" > progs.src
@@ -25,11 +25,11 @@ passall: $(patsubst %,pass-%.asm,$(testsuite))
 	@rm *.lno *.dat *.log progs.src
 	@mv qc.asm $@
 
-pass-%.asm: %.asm
+pass/%.asm: %.asm
 	-mv $^ $@
 
 check-%: %.asm
-	@diff $^ pass-$^ > /dev/null
+	@diff $^ pass/$^ > /dev/null
 	@echo PASSED $^
 
 clean:
