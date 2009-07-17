@@ -27,21 +27,7 @@ float test()
 	x\x = whatever(128)\y;
 	dummy(4);
 	f = (x + y)\y;
-
-	/*
-	return whatever(128)\y;
-	x\xyz = y\zyx;
-	x\xy = x\yx;
-	x\xyz = x\zyx;
-
-	x = x\zyx + y\yzx;
-	x = x\yzx * 3;
-
-	return 3;
-	x = x .* y;
-	x\yxo = 9;
-	return 3;
-	*/
-
+	dummy(5);
+	x\zyx\yzy = 3;
 	return 99;
 }

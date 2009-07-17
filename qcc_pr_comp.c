@@ -4739,9 +4739,7 @@ reloop:
 		if (QCC_PR_CheckToken("\\"))
 		{
 			char *name = QCC_PR_ParseName();
-			fprintf(stderr, "retrieving member (II): %s\n", name);
 			d = QCC_PR_ParseVectorMember(name, d);
-			fprintf(stderr, "type: %i\n", d->type->type);
 			goto reloop;
 		}
 	}
@@ -5370,7 +5368,6 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			if (QCC_PR_CheckToken("\\") && (e->type->type == ev_vector || e->type->type == ev_shuffle3))
 			{
 				char *mem = QCC_PR_ParseName();
-				fprintf(stderr, "retrieving member: %s\n", mem);
 				e = QCC_PR_ParseVectorMember(mem, e);
 				break;
 			}
