@@ -69,6 +69,9 @@ local vector temp_1;
 	STORE_F	10.000000,	parm0_x;
 	CALL1		dummy;
 	STORE_V	'3.000000 4.000000 5.000000',	x;
+	STORE_F	11.000000,	parm0_x;
+	CALL1		dummy;
+	STORE_F	3.000000,	x_z;
 	RETURN	99.000000;
 	DONE;
 }
