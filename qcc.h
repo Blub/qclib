@@ -376,6 +376,7 @@ extern	QCC_type_t	*type_void, *type_string, *type_float, *type_vector, *type_ent
 extern	QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
 extern	QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
 extern	QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
+extern	QCC_type_t	*type_shuffle_2;
 extern	QCC_type_t	*type_shuffle_3;
 
 struct QCC_function_s
@@ -708,6 +709,8 @@ enum {
 	ERR_INVALIDSTRINGIMMEDIATE,
 	ERR_BADCHARACTERCODE,
 	ERR_BADPARMS,
+
+	ERR_BADSHUFFLE,
 
 	WARN_MAX
 };

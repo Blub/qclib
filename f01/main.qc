@@ -2,7 +2,7 @@
 // about the passed parameter.
 void __VARINFO() = #1;
 void dummy(...) = #2;
-vector vec3(float, float, float);
+vector vec3(float, float, float) = #3;
 
 vector whatever(float x)
 {

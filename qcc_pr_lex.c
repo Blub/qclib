@@ -88,6 +88,7 @@ void QCC_PR_LexWhitespace (void);
 QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
 QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
 QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
+QCC_type_t	*type_shuffle_2;
 QCC_type_t	*type_shuffle_3;
 
 //for compiler constants and file includes.
