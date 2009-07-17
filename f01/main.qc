@@ -23,6 +23,6 @@ float test()
 	__VARINFO(x);
 	__VARINFO(x_z);
 	__VARINFO(x.z);
-	
-	return x.z;
+
+	return whatever(3).y;
 }
