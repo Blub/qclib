@@ -84,7 +84,13 @@ QCC_def_t	def_ret, def_parms[MAX_PARMS];
 void QCC_PR_LexWhitespace (void);
 
 
-
+// shuffle types
+QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
+QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
+QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
+QCC_type_t	*type_shuffle_xyz, *type_shuffle_xzy;
+QCC_type_t	*type_shuffle_yxz, *type_shuffle_yzx;
+QCC_type_t	*type_shuffle_zxy, *type_shuffle_zyx;
 
 //for compiler constants and file includes.
 

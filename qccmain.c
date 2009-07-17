@@ -1528,6 +1528,24 @@ void	QCC_PR_BeginCompilation (void *memory, int memsize)
 
 	type_function->aux_type = type_void;
 
+	type_shuffle_xy = QCC_PR_NewType("shuffle_xy", ev_shuffle2);
+	type_shuffle_yx = QCC_PR_NewType("shuffle_yx", ev_shuffle2);
+	
+	type_shuffle_yz = QCC_PR_NewType("shuffle_yz", ev_shuffle2);
+	type_shuffle_zy = QCC_PR_NewType("shuffle_zy", ev_shuffle2);
+	
+	type_shuffle_xz = QCC_PR_NewType("shuffle_xz", ev_shuffle2);
+	type_shuffle_zx = QCC_PR_NewType("shuffle_zx", ev_shuffle2);
+	
+	type_shuffle_xyz = QCC_PR_NewType("shuffle_xyz", ev_shuffle3);
+	type_shuffle_xzy = QCC_PR_NewType("shuffle_xzy", ev_shuffle3);
+	
+	type_shuffle_yxz = QCC_PR_NewType("shuffle_yxz", ev_shuffle3);
+	type_shuffle_yzx = QCC_PR_NewType("shuffle_yzx", ev_shuffle3);
+	
+	type_shuffle_zxy = QCC_PR_NewType("shuffle_zxy", ev_shuffle3);
+	type_shuffle_zyx = QCC_PR_NewType("shuffle_zyx", ev_shuffle3);
+
 	//type_field->aux_type = type_float;
 
 	if (keyword_integer)

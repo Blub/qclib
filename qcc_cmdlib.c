@@ -17,7 +17,7 @@ char **myargv;
 char	qcc_token[1024];
 int		qcc_eof;
 
-const unsigned int		type_size[12] = {1,	//void
+const unsigned int		type_size[14] = {1,	//void
 						sizeof(string_t)/4,	//string
 						1,	//float
 						3,	//vector
@@ -28,7 +28,9 @@ const unsigned int		type_size[12] = {1,	//void
 						1,	//integer
 						1,	//fixme: how big should a variant be?
 						0,	//ev_struct. variable sized.
-						0	//ev_union. variable sized.
+						0,	//ev_union. variable sized.
+						2,	//ev_shuffle2
+						3,	//ev_shuffle3
 						};
 
 /*

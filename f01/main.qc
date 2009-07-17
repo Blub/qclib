@@ -1,6 +1,6 @@
 // __VARINFO is an intrinsic I added to print some info
 // about the passed parameter.
-void __VARINFO();
+void __VARINFO() = #1;
 
 vector whatever(float x)
 {
@@ -25,4 +25,7 @@ float test()
 	__VARINFO(x.z);
 
 	return whatever(3).y;
+	x.xyz = y.zyx;
+	x.xy = x.yx;
+	x.xyz = x.zyx;
 }
