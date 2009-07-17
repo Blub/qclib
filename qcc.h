@@ -373,9 +373,6 @@ const extern	unsigned int		type_size[];
 //extern	QCC_def_t	*def_for_type[9];
 
 extern	QCC_type_t	*type_void, *type_string, *type_float, *type_vector, *type_entity, *type_field, *type_function, *type_pointer, *type_integer, *type_variant, *type_floatfield;
-extern	QCC_type_t	*type_shuffle_xy, *type_shuffle_yx;
-extern	QCC_type_t	*type_shuffle_xz, *type_shuffle_zx;
-extern	QCC_type_t	*type_shuffle_yz, *type_shuffle_zy;
 extern	QCC_type_t	*type_shuffle_2;
 extern	QCC_type_t	*type_shuffle_3;
 

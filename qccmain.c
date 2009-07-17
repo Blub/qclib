@@ -1528,17 +1528,6 @@ void	QCC_PR_BeginCompilation (void *memory, int memsize)
 
 	type_function->aux_type = type_void;
 
-	/*
-	type_shuffle_xy = QCC_PR_NewType("shuffle_xy", ev_shuffle2);
-	type_shuffle_yx = QCC_PR_NewType("shuffle_yx", ev_shuffle2);
-	
-	type_shuffle_yz = QCC_PR_NewType("shuffle_yz", ev_shuffle2);
-	type_shuffle_zy = QCC_PR_NewType("shuffle_zy", ev_shuffle2);
-	
-	type_shuffle_xz = QCC_PR_NewType("shuffle_xz", ev_shuffle2);
-	type_shuffle_zx = QCC_PR_NewType("shuffle_zx", ev_shuffle2);
-	*/
-
 	type_shuffle_2 = QCC_PR_NewType("shuffle_w", ev_shuffle2);
 	type_shuffle_3 = QCC_PR_NewType("shuffle_3", ev_shuffle3);
 
