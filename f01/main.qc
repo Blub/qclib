@@ -37,5 +37,7 @@ float test()
 	x\xz = y\zx; // works
 	dummy(8);
 	x\xy = x\yx; // works, uses a temp to do real swapping
+	dummy(9);
+	x = whatever(32)\zxx; // works
 	return 99;
 }
