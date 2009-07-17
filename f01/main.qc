@@ -29,5 +29,8 @@ float test()
 	f = (x + y)\y; // works
 	dummy(5);
 	x\zyx\yzy = 3; // works and prints the correct warning
+	dummy(6);
+	x\xzo = 3;
+	x\y = 9;
 	return 99;
 }

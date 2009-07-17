@@ -4035,6 +4035,7 @@ Returns a member of a vector
 */
 QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 {
+	QCC_FreeTemp(d);
 	if(!strcmp(name, "x"))
 	{
 		d = CopyDef(d);
