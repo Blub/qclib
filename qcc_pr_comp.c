@@ -4044,17 +4044,19 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 	{
 		d = CopyDef(d);
 		d->type = type_float;
-		d->ofs++;
+		d->ofs += 1;
 		if(d->temp)
-			d->ofs++;
+			d->temp->ofs += 1;
 	}
 	else if(!strcmp(name, "z"))
 	{
 		d = CopyDef(d);
 		d->type = type_float;
+		fprintf("... %i\n", d->ofs);
+		fprintf("... %i\n", d->ofs);
 		d->ofs += 2;
 		if(d->temp)
-			d->ofs += 2;
+			d->temp->ofs += 2;
 	}
 	else if(!strcmp(name, "xy"))
 	{
@@ -4085,10 +4087,6 @@ QCC_def_t	*QCC_PR_ParseVectorMember(const char *name, QCC_def_t *d)
 	{
 		d = CopyDef(d);
 		d->type = type_shuffle_zy;
-	}
-	else if(!strcmp(name, "xyz"))
-	{
-		// this is the vector itself
 	}
 	else
 	{
