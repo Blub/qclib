@@ -13,7 +13,10 @@ testsuite = \
 	multi_shuffle_21 \
 	shuf2_swap \
 	vec3_intrinsic \
-	component_product
+	component_product \
+	unary_minus \
+	ternary_target \
+	ternary_term
 
 all: $(patsubst %,check-%,$(testsuite))
 
@@ -22,8 +25,9 @@ passall: $(patsubst %,pass/%.asm,$(testsuite))
 %.asm: %.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
-	@$(QCC) -Fwasm $(QCFLAGS) >/dev/null
+	@$(QCC) -Fwasm $(QCFLAGS) > compile.out
 	@rm *.lno *.dat *.log progs.src
+	@rm compile.out
 	@mv qc.asm $@
 
 pass/%.asm: %.asm
