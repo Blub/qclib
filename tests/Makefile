@@ -12,7 +12,8 @@ testsuite = \
 	multi_shuffle_33 \
 	multi_shuffle_21 \
 	shuf2_swap \
-	vec3_intrinsic
+	vec3_intrinsic \
+	component_product
 
 all: $(patsubst %,check-%,$(testsuite))
 
@@ -29,7 +30,8 @@ pass/%.asm: %.asm
 	-mv $^ $@
 
 check-%: %.asm
-	@diff $^ pass/$^ > /dev/null
+	@diff -up $^ pass/$^ > err.diff
+	@rm err.diff
 	@echo PASSED $^
 
 clean:

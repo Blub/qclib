@@ -592,7 +592,6 @@ pbool OpAssignedTo(QCC_def_t *v, unsigned int op)
 #define CONDITION_PRIORITY 7
 
 #define COMP_MUL_PRIORITY 4
-#define COMP_MUL_BASE_OP "+"
 #define VEC_MEM_PRIORITY 1
 
 //this system cuts out 10/120
@@ -1310,9 +1309,18 @@ static QCC_def_t *QCC_GetTemp(QCC_type_t *type)
 			t->ofs = QCC_GetFreeOffsetSpace(t->size);
 
 			numtemps+=t->size;
+			//snprintf(t->comment, sizeof(t->comment), "from %s:%i:%li", strings + s_file, pr_source_line, pr_file_p-pr_line_start);
 		}
 		else
+		{
+			/*
+			size_t size = strlen(t->comment);
+			char *to = t->comment + strlen(t->comment);
+			size = sizeof(t->comment) - size;
+			snprintf(to, size, " + %s:%i:%li", strings + s_file, pr_source_line, pr_file_p-pr_line_start);
+			*/
 			optres_overlaptemps+=t->size;
+		}
 		//use a previous one.
 		var_c->ofs = t->ofs;
 		var_c->temp = t;
@@ -1334,6 +1342,7 @@ static QCC_def_t *QCC_GetTemp(QCC_type_t *type)
 		var_c->ofs = t->ofs;
 		var_c->temp = t;
 		t->lastfunc = pr_scope;
+		//snprintf(t->comment, sizeof(t->comment), "from %s:%i:%li", strings + s_file, pr_source_line, pr_file_p-pr_line_start);
 	}
 	else
 	{
@@ -1516,6 +1525,7 @@ static void QCC_fprintfLocals(FILE *f, gofs_t paramstart, gofs_t paramend)
 	{
 		if (t->lastfunc == pr_scope)
 		{
+			//fprintf(f, "local %s temp_%i; // [%i:%i] %s\n", (t->size == 1)?"float":"vector", i, t->ofs, t->size, t->comment);
 			fprintf(f, "local %s temp_%i;\n", (t->size == 1)?"float":"vector", i);
 		}
 	}
@@ -5326,6 +5336,7 @@ PR_Expression
 
 QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 {
+	const char *sim_opt = NULL;
 	QCC_dstatement32_t	*st;
 	QCC_opcode_t	*op, *oldop;
 
@@ -5335,6 +5346,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 	int opnum;
 
 	QCC_def_t		*e, *e2;
+	QCC_def_t		*tmp;
 	etype_t		type_a, type_b, type_c;
 
 	if (priority == 0)
@@ -5400,11 +5412,18 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 		{
 //			if (op->priority != priority)
 //				continue;
-			if(priority == COMP_MUL_PRIORITY && QCC_PR_CheckToken(".*") && !strcmp(op->name, COMP_MUL_BASE_OP))
+			sim_opt = NULL;
+			if(priority == COMP_MUL_PRIORITY && QCC_PR_CheckToken(".*"))
 			{
+				opnum = OP_ADD_V;
+				op = &pr_opcodes[OP_ADD_V];
+				sim_opt = ".*";
 			}
 			else if(priority == VEC_MEM_PRIORITY && !strcmp(pr_token, "\\"))
 			{
+				opnum = OP_LOAD_F;
+				op = &pr_opcodes[OP_LOAD_F];
+				sim_opt = "\\";
 			}
 			else if (!QCC_PR_CheckToken (op->name))
 				continue;
@@ -5486,41 +5505,54 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 				// shuffled assignment
 				e = QCC_ShuffleAssign(e, e2);
 				qcc_usefulstatement = true;
-				continue;
+				break;
 			}
 			else
 			{
-				QCC_def_t *tmp;
-				// Not a shuffled assignment, so shuffle into a temp
-				if(type_a == ev_shuffle2 || type_a == ev_shuffle3)
-				{
-					tmp = QCC_GetTemp(type_vector);
-					e = QCC_ShuffleAssign(tmp, e);
-				}
-				if(type_b == ev_shuffle2 || type_b == ev_shuffle3)
-				{
-					tmp = QCC_GetTemp(type_vector);
-					e2 = QCC_ShuffleAssign(tmp, e2);
-				}
 				type_c = ev_void;
 			}
-			// AFTER having it shuffled we can insert other operators like .*
-			if(!strcmp(op->name, ".*"))
+
+			// Not a shuffled assignment, so shuffle into a temp
+			if(type_a == ev_shuffle2 || type_a == ev_shuffle3)
 			{
-				// component wise multiplication
-				QCC_def_t *res = QCC_GetTemp(type_vector);
-				qcc_usefulstatement = true;
-				QCC_def_t *x, *y, *z;
-				QCC_def_t *e_x, *e_y, *e_z;
-				QCC_def_t *e2_x, *e2_y, *e2_z;
-				QCC_Shuffle(type_vector, res, &x, &y, &z);
-				QCC_Shuffle(type_vector, e, &e_x, &e_y, &e_z);
-				QCC_Shuffle(type_vector, e2, &e2_x, &e2_y, &e2_z);
-				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_x, e2_x, x);
-				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_y, e2_y, y);
-				QCC_PR_Statement(&pr_opcodes[OP_MUL_F], e_z, e2_z, z);
-				QCC_UnFreeTemp(res);
-				continue;
+				QCC_def_t *old = e;
+				tmp = QCC_GetTemp(type_vector);
+				e = QCC_ShuffleAssign(tmp, e);
+				QCC_FreeTemp(old);
+			}
+			if(type_b == ev_shuffle2 || type_b == ev_shuffle3)
+			{
+				QCC_def_t *old = e2;
+				tmp = QCC_GetTemp(type_vector);
+				e2 = QCC_ShuffleAssign(tmp, e2);
+				QCC_FreeTemp(old);
+			}
+
+			// AFTER having it shuffled we can insert other operators like .*
+			if(sim_opt)
+			{
+				if(!strcmp(sim_opt, ".*"))
+				{
+					QCC_def_t *x, *y, *z;
+					QCC_def_t *e_x, *e_y, *e_z;
+					QCC_def_t *e2_x, *e2_y, *e2_z;
+
+					QCC_Shuffle(type_vector, e, &e_x, &e_y, &e_z);
+					QCC_Shuffle(type_vector, e2, &e2_x, &e2_y, &e2_z);
+					QCC_FreeTemp(e);
+					QCC_FreeTemp(e2);
+
+					tmp = QCC_GetTemp(type_vector);
+					QCC_Shuffle(type_vector, tmp, &x, &y, &z);
+
+					QCC_PR_Statement3(&pr_opcodes[OP_MUL_F], e_x, e2_x, x, true);
+					QCC_PR_Statement3(&pr_opcodes[OP_MUL_F], e_y, e2_y, y, true);
+					QCC_PR_Statement3(&pr_opcodes[OP_MUL_F], e_z, e2_z, z, true);
+
+					e = tmp;
+					break;
+				}
+				// add more?
 			}
 				
 			oldop = op;

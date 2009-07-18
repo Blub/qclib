@@ -321,6 +321,8 @@ typedef struct temp_s {
 	struct temp_s	*next;
 	pbool used;
 	unsigned int size;
+
+	//char comment[256];
 } temp_t;
 
 //not written
@@ -743,6 +745,7 @@ extern pbool qccwarningdisabled[WARN_MAX];
 extern	jmp_buf		pr_parse_abort;		// longjump with this on parse error
 extern	int			pr_source_line;
 extern	char		*pr_file_p;
+extern	char		*pr_line_start;
 
 void *QCC_PR_Malloc (int size);
 
