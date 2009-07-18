@@ -32,6 +32,7 @@ pass/%.asm: %.asm
 check-%: %.asm
 	@diff -up $^ pass/$^ > err.diff
 	@rm err.diff
+	@rm $^
 	@echo PASSED $^
 
 clean:
