@@ -1,0 +1,9 @@
+Source file: progs.src
+outputfile: test.dat
+compiling main.qc
+in function test (line 2),
+main.qc:4: warning: You may wish to add brackets after that ! operator
+
+************ ERROR ************
+warnings are treated like errors
+Error in main.qc on line 8

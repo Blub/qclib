@@ -7,6 +7,10 @@ all:
 	@less qc.asm
 	-rm qc.asm
 
+werror:
+	$(QCC) -Werror $(QCFLAGS)
+	-rm -f *.lno *.dat *.log qc.asm
+
 checkpassed:
 	$(QCC) -Fwasm $(QCFLAGS)
 	-rm *.lno *.dat *.log
