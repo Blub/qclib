@@ -104,6 +104,8 @@ QCC_type_t *qcc_typeinfo;
 int numtypeinfos;
 int maxtypeinfos;
 
+static pbool pr_werror;
+
 
 struct {
 	char *name;
@@ -2480,6 +2482,8 @@ void QCC_PR_CommandLinePrecompilerOptions (void)
 				memset(qccwarningdisabled, 0, sizeof(qccwarningdisabled));
 			else if (!stricmp(myargv[i]+2, "none"))
 				memset(qccwarningdisabled, 1, sizeof(qccwarningdisabled));
+			else if(!stricmp(myargv[i]+2, "error"))
+				pr_werror = true;
 			else if (!stricmp(myargv[i]+2, "no-mundane"))
 			{	//disable mundane performance/efficiency/blah warnings that don't affect code.
 				qccwarningdisabled[WARN_SAMENAMEASGLOBAL] = true;
@@ -3208,17 +3212,25 @@ void QCC_FinishCompile(void)
 	}*/
 
 	
+
+	if (!pr_werror || pr_warning_count == 0)
+	{
 // write progdefs.h
-	crc = QCC_PR_WriteProgdefs ("progdefs.h");
+		crc = QCC_PR_WriteProgdefs ("progdefs.h");
 	
 // write data file
-	donesomething = QCC_WriteData (crc);
+		donesomething = QCC_WriteData (crc);
 	
 // regenerate bmodels if -bspmodels
-	QCC_BspModels ();
+		QCC_BspModels ();
 
 // report / copy the data files
-	QCC_CopyFiles ();
+		QCC_CopyFiles ();
+	}
+	else
+	{
+		QCC_Error(ERR_WERROR, "warnings are treated like errors");
+	}
 
 	if (donesomething)
 	{
