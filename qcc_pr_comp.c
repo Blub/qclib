@@ -915,6 +915,8 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_GSTOREP_S:
 		case OP_GSTOREP_FNC:
 		case OP_GSTOREP_V:
+			if (qcc_targetformat == QCF_DARKPLACES1)
+				return false; // not yet
 			return true;
 
 		//this opcode looks weird
