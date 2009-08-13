@@ -5371,9 +5371,10 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 					QCC_def_t *t;
 					QCC_FreeTemp(e);
 					t = QCC_GetTemp(type_float);
-					QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_NOT_F], e, NULL, t));
-					e = t;
-					QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_IF], e, NULL, &fromj));
+					
+					QCC_PR_Statement3(&pr_opcodes[OP_NOT_F], e, NULL, t, false);
+					QCC_FreeTemp(t);
+					QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_IF], t, NULL, &fromj));
 				}
 				else
 					QCC_FreeTemp(QCC_PR_Statement(&pr_opcodes[OP_IFNOT], e, NULL, &fromj));
