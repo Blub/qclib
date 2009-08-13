@@ -251,6 +251,8 @@ struct {
 	{QCF_FTE,		"fte"},
 	{QCF_DARKPLACES,"darkplaces"},
 	{QCF_DARKPLACES,"dp"},
+	{QCF_DARKPLACES1,"darkplaces1"},
+	{QCF_DARKPLACES1,"dp1"},
 	{0,				NULL}
 };
 

@@ -833,6 +833,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		if (num >= OP_NUMREALOPS)
 			return false;
 		return true;
+	case QCF_DARKPLACES1:
 	case QCF_DARKPLACES:
 		//all id opcodes.
 		if (num < OP_MULSTORE_F)
@@ -928,6 +929,8 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_GLOAD_ENT:
 		case OP_GLOAD_S:
 		case OP_GLOAD_FNC:
+			if(qcc_targetformat == QCF_DARKPLACES1)
+				return false; // not yet, needs clarification
 			return true;
 		case OP_GLOAD_V:
 			return false;	//DPFIXME: this is commented out in the patch I was given a link to... because the opcode wasn't defined.
@@ -1029,6 +1032,8 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_LOADP_S:
 		case OP_LOADP_FNC:
 		case OP_LOADP_V:
+			if(qcc_targetformat == QCF_DARKPLACES1)
+				return false; // DP1 doesn't support this yet
 			return true;
 
 		case OP_XOR_I:
