@@ -9,6 +9,5 @@ local vector temp_0;
 	ADD_V		x,	y,	temp_0;
 	STORE_F	temp_0_y,	f;
 	RETURN	0.000000;
-	DONE;
 }
 

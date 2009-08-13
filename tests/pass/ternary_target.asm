@@ -29,6 +29,5 @@ local float temp_1;
 	STORE_F	temp_0,	parm2_x;
 	CALL3		f;
 	RETURN	0.000000;
-	DONE;
 }
 

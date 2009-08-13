@@ -7,6 +7,5 @@ local vector x;
 	STORE_F	y_z,	x_x;
 	STORE_F	y_x,	x_z;
 	RETURN	0.000000;
-	DONE;
 }
 

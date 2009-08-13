@@ -1,5 +1,8 @@
 QCC=../fteqcc.bin
-QCFLAGS ?=
+# by default use nexuiz' flags
+QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo
+
+QCFLAGS_NOWERROR=$(patsubst -Werror,,$(QCFLAGS))
 
 testsuite = \
 	assign_shuf3 \
@@ -22,11 +25,19 @@ all: $(patsubst %,check-%,$(testsuite))
 
 passall: $(patsubst %,pass/%.asm,$(testsuite))
 
+multi_shuffle_33.asm: multi_shuffle_33.qc
+	@echo "test.dat" > progs.src
+	@echo $^ >> progs.src
+	@$(QCC) -Fwasm $(QCFLAGS_NOWERROR) > compile.out
+	@rm -f *.lno *.dat *.log progs.src
+	@rm compile.out
+	@mv qc.asm $@
+
 %.asm: %.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
 	@$(QCC) -Fwasm $(QCFLAGS) > compile.out
-	@rm *.lno *.dat *.log progs.src
+	@rm -f *.lno *.dat *.log progs.src
 	@rm compile.out
 	@mv qc.asm $@
 

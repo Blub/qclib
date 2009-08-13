@@ -9,9 +9,8 @@ local float temp_0;
 	NOT_F		return_x,	temp_0;
 	IF		temp_0,	3;
 	STORE_F	4.000000,	temp_0;
-	GOTO		2;
+	RETURN	temp_0;
 	STORE_F	5.000000,	temp_0;
 	RETURN	temp_0;
-	DONE;
 }
 

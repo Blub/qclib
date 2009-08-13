@@ -9,6 +9,5 @@ local vector temp_0;
 	MUL_F		x_y,	y_y,	temp_0_y;
 	MUL_F		x_z,	y_z,	temp_0_z;
 	RETURN	temp_0_x;
-	DONE;
 }
 

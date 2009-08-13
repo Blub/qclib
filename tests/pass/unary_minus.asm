@@ -15,6 +15,5 @@ local vector temp_1;
 	MUL_F		a,	temp_0,	temp_0;
 	ADD_F		temp_0,	c,	f;
 	RETURN	0.000000;
-	DONE;
 }
 
