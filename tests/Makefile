@@ -20,8 +20,6 @@ testsuite = \
 	unary_minus \
 	ternary_target \
 	ternary_term \
-	\
-	pointer_function
 
 all: $(patsubst %,check-%,$(testsuite))
 
