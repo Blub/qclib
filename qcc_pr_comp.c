@@ -5378,7 +5378,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			if (QCC_PR_CheckToken ("?"))
 			{
 				QCC_dstatement32_t *fromj, *elsej;
-				if(e->type->type == ev_float)
+				if (0 && e->type->type == ev_float)
 				{
 					QCC_def_t *t;
 					QCC_FreeTemp(e);
@@ -5501,7 +5501,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 					st = &statements[numstatements];
 					if (*op->name == '&')	//statement 3 because we don't want to optimise this into if from not ifnot
 					{
-						if(e->type->type == ev_float)
+						if (0 && e->type->type == ev_float)
 						{
 							QCC_def_t *t;
 							QCC_FreeTemp(e);
@@ -5516,7 +5516,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 					}
 					else
 					{
-						if(e->type->type == ev_float)
+						if (0 && e->type->type == ev_float)
 						{
 							QCC_def_t *t;
 							QCC_FreeTemp(e);
@@ -6271,7 +6271,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "if not(string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFS], e, 0, &patch1));
 			}
-			else if(e->type->type == ev_float)
+			else if (0 && e->type->type == ev_float)
 			{
 				QCC_def_t *t;
 				QCC_FreeTemp(e);
@@ -6290,7 +6290,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "if (string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOTS], e, 0, &patch1));
 			}
-			else if(e->type->type == ev_float)
+			else if (0 && e->type->type == ev_float)
 			{
 				QCC_def_t *t;
 				QCC_FreeTemp(e);
