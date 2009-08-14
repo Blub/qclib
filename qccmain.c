@@ -610,6 +610,7 @@ pbool QCC_WriteData (int crc)
 	case QCF_FTEDEBUG:
 	case QCF_FTE:
 	case QCF_DARKPLACES:
+	case QCF_DARKPLACES1:
 		if (qcc_targetformat == QCF_FTEDEBUG)
 			debugtarget = true;
 
@@ -619,7 +620,7 @@ pbool QCC_WriteData (int crc)
 			outputsize = 32;
 		}
 
-		if (qcc_targetformat == QCF_DARKPLACES)
+		if (qcc_targetformat == QCF_DARKPLACES || qcc_targetformat == QCF_DARKPLACES1)
 			compressoutput = 0;
 
 
@@ -635,7 +636,7 @@ pbool QCC_WriteData (int crc)
 		//include a type block?
 		types = debugtarget;//!!QCC_PR_CheckCompConstDefined("TYPES");	//useful for debugging and saving (maybe, anyway...).
 
-		if (qcc_targetformat == QCF_DARKPLACES)
+		if (qcc_targetformat == QCF_DARKPLACES || qcc_targetformat == QCF_DARKPLACES1)
 			printf("DarkPlaces or FTE will be required\n");
 		else
 			printf("An FTE executor will be required\n");
@@ -1130,6 +1131,7 @@ strofs = (strofs+3)&~3;
 		progs.version = PROG_VERSION;
 		break;
 	case QCF_DARKPLACES:
+	case QCF_DARKPLACES1:
 	case QCF_FTE:
 	case QCF_FTEDEBUG:
 		progs.version = PROG_EXTENDEDVERSION;
@@ -2613,6 +2615,8 @@ void QCC_SetDefaultProperties (void)
 		qcc_targetformat = QCF_HEXEN2;
 	else if (QCC_CheckParm ("-fte"))
 		qcc_targetformat = QCF_FTE;
+	else if (QCC_CheckParm ("-dp1"))
+		qcc_targetformat = QCF_DARKPLACES1;
 	else if (QCC_CheckParm ("-dp"))
 		qcc_targetformat = QCF_DARKPLACES;
 	else

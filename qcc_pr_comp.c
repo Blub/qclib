@@ -954,6 +954,8 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_RANDV0:
 		case OP_RANDV1:
 		case OP_RANDV2:
+			if(qcc_targetformat == QCF_DARKPLACES1)
+				return false; // I don't like these yet
 			return true;
 
 		case OP_BITSET: // b |= a
@@ -990,7 +992,10 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_LOADA_S:
 		case OP_LOADA_FNC:
 		case OP_LOADA_V:
-			return false;	//DPFIXME: DP does not bounds check these properly. I won't generate them.
+			//return false;	//DPFIXME: DP does not bounds check these properly. I won't generate them.
+			// execloop.h does the same, yet you complain :P
+			// anyway, I added boundschecking to my DP patch
+			return true;	//DPFIXME: DP does not bounds check these properly. I won't generate them.
 			
 		case OP_CONV_ITOF:
 		case OP_CONV_FTOI:
@@ -1035,7 +1040,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_LOADP_FNC:
 		case OP_LOADP_V:
 			if(qcc_targetformat == QCF_DARKPLACES1)
-				return false; // DP1 doesn't support this yet
+				return true; // DP1 doesn't support this yet
 			return true;
 
 		case OP_XOR_I:

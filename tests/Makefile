@@ -1,6 +1,6 @@
 QCC=../fteqcc.bin
 # by default use nexuiz' flags
-QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo
+QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo -TDP1
 
 QCFLAGS_NOWERROR=$(patsubst -Werror,,$(QCFLAGS))
 
@@ -19,7 +19,9 @@ testsuite = \
 	component_product \
 	unary_minus \
 	ternary_target \
-	ternary_term
+	ternary_term \
+	\
+	pointer_function
 
 all: $(patsubst %,check-%,$(testsuite))
 
