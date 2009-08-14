@@ -5504,12 +5504,11 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 						if (0 && e->type->type == ev_float)
 						{
 							QCC_def_t *t;
-							QCC_FreeTemp(e);
 							t = QCC_GetTemp(type_float);
 							QCC_PR_Statement3(&pr_opcodes[OP_NOT_F], e, NULL, t, false);
 							st = &statements[numstatements];
 							QCC_PR_Statement3(&pr_opcodes[OP_IF], t, NULL, NULL, false);
-							e = t;
+							QCC_FreeTemp(t);
 						}
 						else
 							QCC_PR_Statement3(&pr_opcodes[OP_IFNOT], e, NULL, NULL, false);
@@ -5519,13 +5518,11 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 						if (0 && e->type->type == ev_float)
 						{
 							QCC_def_t *t;
-							QCC_FreeTemp(e);
 							t = QCC_GetTemp(type_float);
 							QCC_PR_Statement3(&pr_opcodes[OP_NOT_F], e, NULL, t, false);
 							st = &statements[numstatements];
 							QCC_PR_Statement3(&pr_opcodes[OP_IFNOT], t, NULL, NULL, false);
-							e = t;
-							//st++;
+							QCC_FreeTemp(t);
 						}
 						else
 							QCC_PR_Statement3(&pr_opcodes[OP_IF], e, NULL, NULL, false);

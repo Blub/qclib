@@ -20,6 +20,7 @@ testsuite = \
 	unary_minus \
 	ternary_target \
 	ternary_term \
+	logic_ops \
 
 all: $(patsubst %,check-%,$(testsuite))
 
