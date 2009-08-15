@@ -7583,7 +7583,7 @@ void QCC_WriteAsmFunction(QCC_def_t	*sc, unsigned int firststatement, gofs_t fir
 
 	for (i = firststatement; i < (unsigned int)numstatements; i++)
 	{
-		fprintf(asmfile, "  (%02x)\t%s", statements[i].op, pr_opcodes[statements[i].op].opname);
+		fprintf(asmfile, "\t%s", pr_opcodes[statements[i].op].opname);
 		if (pr_opcodes[statements[i].op].type_a != &type_void)
 		{
 			if (strlen(pr_opcodes[statements[i].op].opname)<6)
