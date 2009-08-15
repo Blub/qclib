@@ -20,7 +20,6 @@ testsuite = \
 	unary_minus \
 	ternary_target \
 	ternary_term \
-	logic_ops \
 	\
 	pointer_function \
 
@@ -54,6 +53,7 @@ check-%: %.asm
 	@echo PASSED $^
 
 clean:
+	@rm -f err.diff compile.out
 	@echo done
 
 check-clean:
