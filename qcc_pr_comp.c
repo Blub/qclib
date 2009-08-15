@@ -900,8 +900,10 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 
 		//stores into a pointer (generated from 'ent.field=XXX')
 		case OP_STOREP_I:	//no worse than the other OP_STOREP_X functions
+		case OP_STOREP_P:	//no worse than the other OP_STOREP_X functions
 		//reads from an entity field
 		case OP_LOAD_I:		//no worse than the other OP_LOAD_X functions.
+		case OP_LOAD_P:
 			return true;
 
 		//stores into the globals array.
@@ -1014,6 +1016,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_STORE_FI:
 		case OP_STOREP_IF: // store a value to a pointer
 		case OP_STOREP_FI:
+		case OP_STORE_P:
 		case OP_IFNOTS:
 		case OP_IFS:
 			return true;
@@ -1022,7 +1025,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_CP_FTOI:
 			return false;	//DPFIXME: These are not bounds checked at all.
 		case OP_GLOBALADDRESS:
-			return false;	//DPFIXME: DP will reject these pointers if they are ever used.
+			return true;	//DPFIXME: DP will reject these pointers if they are ever used.
 		case OP_POINTER_ADD:
 			return true;	//just maths.
 
@@ -4545,6 +4548,10 @@ reloop:
 								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_F], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
+							case ev_vector:
+								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_V], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+								nd->type = d->type->aux_type;
+								break;
 							case ev_integer:
 								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_I], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
@@ -5479,6 +5486,12 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 				if ( !simplestore && (unsigned)(statements[numstatements-1].op - OP_LOADP_F) < 7)
 				{
 					statements[numstatements-1].op = OP_ADD_I;
+					if (!e->type->aux_type)
+					{
+						// this happens when dereferencing using *
+						type_pointer->aux_type->type = e->type->type;
+						e->type = type_pointer;
+					}
 				}
 				if ( !simplestore && statements[numstatements-1].op == OP_LOADP_C && e->ofs == statements[numstatements-1].c)
 				{
@@ -7570,7 +7583,7 @@ void QCC_WriteAsmFunction(QCC_def_t	*sc, unsigned int firststatement, gofs_t fir
 
 	for (i = firststatement; i < (unsigned int)numstatements; i++)
 	{
-		fprintf(asmfile, "\t%s", pr_opcodes[statements[i].op].opname);
+		fprintf(asmfile, "  (%02x)\t%s", statements[i].op, pr_opcodes[statements[i].op].opname);
 		if (pr_opcodes[statements[i].op].type_a != &type_void)
 		{
 			if (strlen(pr_opcodes[statements[i].op].opname)<6)

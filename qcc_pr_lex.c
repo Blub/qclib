@@ -3025,6 +3025,7 @@ char	pr_parm_names[MAX_PARMS][MAX_NAME];
 pbool recursivefunctiontype;
 
 QCC_type_t *QCC_PR_NewType (char *name, int basictype);
+QCC_type_t *QCC_PointerTypeTo(QCC_type_t *type);
 //expects a ( to have already been parsed.
 QCC_type_t *QCC_PR_ParseFunctionType (int newtype, QCC_type_t *returntype)
 {
@@ -3058,6 +3059,9 @@ QCC_type_t *QCC_PR_ParseFunctionType (int newtype, QCC_type_t *returntype)
 				}
 
 				nptype = QCC_PR_ParseType(true);
+				while (QCC_PR_CheckToken("*")) {
+					nptype = QCC_PointerTypeTo(nptype);
+				}
 
 				if (nptype->type == ev_void)
 					break;

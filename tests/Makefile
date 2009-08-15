@@ -21,6 +21,8 @@ testsuite = \
 	ternary_target \
 	ternary_term \
 	logic_ops \
+	\
+	pointer_function \
 
 all: $(patsubst %,check-%,$(testsuite))
 
