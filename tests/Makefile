@@ -23,6 +23,7 @@ testsuite = \
 	\
 	pointer_function \
 	pointer_from_field \
+	pointer_to_pointer \
 
 all: $(patsubst %,check-%,$(testsuite))
 
