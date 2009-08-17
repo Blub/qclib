@@ -311,6 +311,10 @@ enum {
 	OP_SWITCH_I,//hmm.
 	OP_GLOAD_V,
 
+//extensions for fixing stuff
+	OP_IF_I,
+	OP_IFNOT_I,
+
 	OP_NUMREALOPS,
 
 	/*
