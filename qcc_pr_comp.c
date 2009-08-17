@@ -4582,12 +4582,17 @@ reloop:
 				}
 				else
 				{
+					QCC_def_t *ao_val;
+
 					switch(newtype->type)
 					{
 					case ev_pointer:
+						ao_val = QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL);
+						ao_val = QCC_PR_Statement (&pr_opcodes[OP_MUL_I], ao_val, QCC_MakeIntDef(real_type_size[d->type->aux_type->type]), NULL);
+						// pointers use *real* offsets...
 						if (d->arraysize>1)	//use the array
 						{
-							nd = QCC_PR_Statement(&pr_opcodes[OP_LOADA_I], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+							nd = QCC_PR_Statement(&pr_opcodes[OP_LOADA_I], d, ao_val, NULL);	//get pointer to precise def.
 							nd->type = d->type->aux_type;
 						}
 						else
@@ -4595,19 +4600,19 @@ reloop:
 							switch(newtype->aux_type->type)
 							{
 							case ev_pointer:
-								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_I], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_I], d, ao_val, NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
 							case ev_float:
-								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_F], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_F], d, ao_val, NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
 							case ev_vector:
-								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_V], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_V], d, ao_val, NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
 							case ev_integer:
-								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_I], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
+								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_I], d, ao_val, NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
 							default:
@@ -4615,10 +4620,16 @@ reloop:
 								nd = NULL;
 								break;
 							}
-
-							// get the new type
-							newtype = newtype->aux_type;
+							// When dereferencing pointers, we cannot simply add together the offsets
+							// so let's not pop off this load instruction if there's another [] ahead.
+							ao = NULL;
+							// FIXME:
+							// new type retrieval was here, but array types must be corrected too
+							// check this when there are problems with arrays
 						}
+
+						// get the new type
+						newtype = newtype->aux_type;
 						break;
 
 					case ev_float:

@@ -23,10 +23,15 @@ float deref_twice()
 
 float deref_index()
 {
-	return *p[0];
+	return *p[1];
 }
 
 float index_twice()
 {
-	return p[0][0];
+	return p[1][1];
+}
+
+float evil_stuff()
+{
+	return v[1];
 }

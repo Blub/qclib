@@ -24,13 +24,29 @@ const unsigned int		type_size[14] = {1,	//void
 						1,	//entity
 						1,	//field
 						sizeof(func_t)/4,//function
-						sizeof(void *)/4,//pointer
+						1,//pointer
 						1,	//integer
 						1,	//fixme: how big should a variant be?
 						0,	//ev_struct. variable sized.
 						0,	//ev_union. variable sized.
 						2,	//ev_shuffle2
 						3,	//ev_shuffle3
+						};
+
+const unsigned int		real_type_size[14] = {1,	//void
+						4*sizeof(string_t)/4,	//string
+						4*1,	//float
+						4*3,	//vector
+						4*1,	//entity
+						4*1,	//field
+						4*sizeof(func_t)/4,//function
+						4*1,//pointer
+						4*1,	//integer
+						4*1,	//fixme: how big should a variant be?
+						0,	//ev_struct. variable sized.
+						0,	//ev_union. variable sized.
+						4*2,	//ev_shuffle2
+						4*3,	//ev_shuffle3
 						};
 
 /*
