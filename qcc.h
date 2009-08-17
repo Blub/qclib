@@ -613,6 +613,8 @@ enum {
 	WARN_CONSTANTCOMPARISON,
 	WARN_UNSAFEFUNCTIONRETURNTYPE,
 
+	WARN_POINTERTOFIELD,
+
 	ERR_PARSEERRORS,	//caused by qcc_pr_parseerror being called.
 
 	//these are definatly my fault...

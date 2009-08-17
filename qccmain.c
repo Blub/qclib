@@ -2505,6 +2505,7 @@ void QCC_PR_CommandLinePrecompilerOptions (void)
 				qccwarningdisabled[WARN_FIXEDRETURNVALUECONFLICT] = true;
 				qccwarningdisabled[WARN_EXTRAPRECACHE] = true;
 				qccwarningdisabled[WARN_CORRECTEDRETURNTYPE] = true;
+				qccwarningdisabled[WARN_POINTERTOFIELD] = true;
 			}
 			else
 			{

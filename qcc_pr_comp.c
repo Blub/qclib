@@ -5001,7 +5001,7 @@ QCC_def_t *QCC_PR_Term (void)
 				if ((unsigned)(statements[numstatements-1].op - OP_LOAD_F) < 6 || statements[numstatements-1].op == OP_LOAD_I || statements[numstatements-1].op == OP_LOAD_P)
 				{
 					statements[numstatements-1].op = OP_ADDRESS;
-					QCC_PR_ParseWarning(0, "debug: &ent.field");
+					QCC_PR_ParseWarning(WARN_POINTERTOFIELD, "debug: &ent.field");
 					e->type = QCC_PR_PointerType(e->type);
 					return e;
 				}

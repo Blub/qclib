@@ -22,6 +22,7 @@ testsuite = \
 	ternary_term \
 	\
 	pointer_function \
+	pointer_from_field \
 
 all: $(patsubst %,check-%,$(testsuite))
 
