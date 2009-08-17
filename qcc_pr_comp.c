@@ -9010,6 +9010,8 @@ void QCC_PR_ParseDefs (char *classname)
 		{
 			QCC_PR_ParseError(ERR_NOTANAME, "typedef found unexpected tokens");
 		}
+		while (QCC_PR_CheckToken("*"))
+			type = QCC_PointerTypeTo(type);
 		type->name = QCC_CopyString(pr_token)+strings;
 		QCC_PR_Lex();
 		QCC_PR_Expect(";");
