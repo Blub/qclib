@@ -4375,11 +4375,8 @@ reloop:
 	if (QCC_PR_CheckToken("["))
 	{
 		QCC_type_t *newtype;
-		if (d->type->type == ev_field && d->type->aux_type && d->type->aux_type->type == ev_string)
-		{
-			// this way we avoid some optimizing issues causing segfaults
-		}
-		else if (d->type->type != ev_pointer && d->type->type != ev_string && d->arraysize == 1)
+		if (d->type->type != ev_pointer && d->type->type != ev_string && d->arraysize == 1 &&
+		    ! (d->type->type == ev_field && d->type->aux_type && d->type->aux_type->type == ev_string) )
 		{
 			QCC_PR_ParseError (ERR_NOINDEXTYPE, "Cannot use index operator on %s", TypeName(d->type));
 		}
