@@ -440,7 +440,7 @@ QCC_opcode_t pr_opcodes[] =
  {7, "+", "ADD_SF",	4, ASSOC_LEFT,				&type_string,	&type_float, &type_string},
  {7, "-", "SUB_S",	4, ASSOC_LEFT,				&type_string,	&type_string, &type_float},
  {7, "<STOREP_C>", "STOREP_C",	1, ASSOC_RIGHT,	&type_string,	&type_float, &type_float},
- {7, "<LOADP_C>", "LOADP_C",	1, ASSOC_LEFT,	&type_string,	&type_void, &type_float},
+ {7, "<LOADP_C>", "LOADP_C",	1, ASSOC_LEFT,	&type_string,	&type_float, &type_float},
 	//-------------------------------------
 
 
@@ -1006,8 +1006,9 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_CONV_FTOI:
 			return true;	//these look fine.
 
+		case OP_LOADP_C:        //load character from a string
 		case OP_STOREP_C: // store a char in a string
-			return false; //DPFIXME: dp's bounds check may give false positives with expected uses.
+			return true; //DPFIXME: dp's bounds check may give false positives with expected uses.
 
 		case OP_MULSTORE_F:
 		case OP_MULSTORE_V:
@@ -1037,8 +1038,6 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_ADD_SF: //(char*)c = (char*)a + (float)b
 		case OP_SUB_S:  //(float)c = (char*)a - (char*)b
 			return true;
-		case OP_LOADP_C:        //load character from a string
-			return false;	//DPFIXME: DP looks like it'll reject these or wrongly allow.
 
 		case OP_LOADP_I:
 		case OP_LOADP_F:
