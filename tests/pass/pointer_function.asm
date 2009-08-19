@@ -19,7 +19,6 @@ local float temp_0;
 local vector temp_1;
 local vector temp_2;
 	C_FTOI	0.000000,	temp_0;
-	MUL_I		temp_0,	12,	temp_0;
 	ADD_I		c,	temp_0,	temp_1_x;
 	ADD_V		a,	b,	temp_2;
 	STOREP_V	temp_2_x,	temp_1;

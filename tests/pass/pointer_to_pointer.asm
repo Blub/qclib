@@ -35,7 +35,6 @@ float() deref_index = asm
 {
 local float temp_0;
 	C_FTOI	1.000000,	temp_0;
-	MUL_I		temp_0,	4,	temp_0;
 	LOADP_I	p,	temp_0,	temp_0;
 	LOADP_F	temp_0,	offset_0,	temp_0;
 	RETURN	temp_0;
@@ -47,10 +46,8 @@ float() index_twice = asm
 local float temp_0;
 local float temp_1;
 	C_FTOI	1.000000,	temp_1;
-	MUL_I		temp_1,	4,	temp_1;
 	LOADP_I	p,	temp_1,	temp_1;
 	C_FTOI	1.000000,	temp_0;
-	MUL_I		temp_0,	4,	temp_0;
 	LOADP_F	temp_1,	temp_0,	temp_0;
 	RETURN	temp_0;
 }
@@ -60,7 +57,6 @@ float() evil_stuff = asm
 {
 local float temp_0;
 	C_FTOI	1.000000,	temp_0;
-	MUL_I		temp_0,	4,	temp_0;
 	LOADP_F	v,	temp_0,	temp_0;
 	RETURN	temp_0;
 }

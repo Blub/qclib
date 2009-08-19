@@ -4587,7 +4587,7 @@ reloop:
 					{
 					case ev_pointer:
 						ao_val = QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL);
-						ao_val = QCC_PR_Statement (&pr_opcodes[OP_MUL_I], ao_val, QCC_MakeIntDef(real_type_size[d->type->aux_type->type]), NULL);
+						//ao_val = QCC_PR_Statement (&pr_opcodes[OP_MUL_I], ao_val, QCC_MakeIntDef(real_type_size[d->type->aux_type->type]), NULL);
 						// pointers use *real* offsets...
 						if (d->arraysize>1)	//use the array
 						{
