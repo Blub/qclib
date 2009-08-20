@@ -1,6 +1,6 @@
 QCC=../fteqcc.bin
 # by default use nexuiz' flags
-QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo -TDP1
+QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo -TDP1 $(QCFLAGADD)
 
 QCFLAGS_NOWERROR=$(patsubst -Werror,,$(QCFLAGS))
 
@@ -25,6 +25,7 @@ testsuite = \
 	pointer_from_field \
 	pointer_to_pointer \
 	string_access \
+	array_access \
 
 all: $(patsubst %,check-%,$(testsuite))
 

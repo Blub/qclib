@@ -394,8 +394,8 @@ QCC_opcode_t pr_opcodes[] =
  {7, "<<", "LSHIFT_I", 3, ASSOC_LEFT,			&type_integer,	&type_integer, &type_integer},
 
 										//var,		offset			return
- {7, "<ARRAY>", "GET_POINTER", -1, ASSOC_LEFT,	&type_float,		&type_integer, &type_pointer},
- {7, "<ARRAY>", "ARRAY_OFS", -1, ASSOC_LEFT,		&type_pointer,	&type_integer, &type_pointer},
+ {7, "<ARRAY>", "GLOBALADDRESS", -1, ASSOC_LEFT,	&type_float,		&type_integer, &type_pointer},
+ {7, "<ARRAY>", "POINTER_ADD", -1, ASSOC_LEFT,		&type_pointer,	&type_integer, &type_pointer},
 
  {7, "=", "LOADA_F", 6, ASSOC_LEFT,			&type_float,	&type_integer, &type_float},
  {7, "=", "LOADA_V", 6, ASSOC_LEFT,			&type_vector,	&type_integer, &type_vector},
@@ -1060,7 +1060,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_FETCH_GBL_E:
 		case OP_FETCH_GBL_FNC:
 		case OP_FETCH_GBL_V:
-			return false;	//DPFIXME: DP will not bounds check this properly, it is too permissive.
+			return false;	//DPFIXME: check again please, I think they're fine now
 		case OP_CSTATE:
 		case OP_CWSTATE:
 			return false;	//DP does not support this hexenc opcode.
