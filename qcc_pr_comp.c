@@ -6585,7 +6585,7 @@ void QCC_PR_ParseStatement (void)
 							e2 = QCC_PR_Statement (&pr_opcodes[OP_GE_I], e, pr_casesdef[i], NULL);
 							e3 = QCC_PR_Statement (&pr_opcodes[OP_LE_I], e, pr_casesdef2[i], NULL);
 							e2 = QCC_PR_Statement (&pr_opcodes[OP_AND], e2, e3, NULL);
-							QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_I], e2, 0, &patch3));
+							QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[IfOpForEv(ev_integer, false)], e2, 0, &patch3));
 							patch3->b = &statements[pr_cases[i]] - patch3;
 						}
 						else
@@ -6631,7 +6631,7 @@ void QCC_PR_ParseStatement (void)
 								e2 = NULL;
 								break;
 							}
-							QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_I], e2, 0, &patch3));
+							QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[IfOpForEv(ev_integer, false)], e2, 0, &patch3));
 						}
 						else
 						{
@@ -8086,7 +8086,7 @@ void QCC_PR_EmitArrayGetFunction(QCC_def_t *scope, char *arrayname)
 
 	if (fasttrackpossible)
 	{
-		QCC_PR_Statement(pr_opcodes+OP_IFNOT_I, fasttrackpossible, NULL, &st);
+		QCC_PR_Statement(pr_opcodes+IfOpForEv(ev_integer, true), fasttrackpossible, NULL, &st);
 		//fetch_gbl takes: (float size, variant array[]), float index, variant pos
 		//note that the array size is coded into the globals, one index before the array.
 
@@ -8245,7 +8245,7 @@ void QCC_PR_EmitArraySetFunction(QCC_def_t *scope, char *arrayname)
 	{
 		QCC_dstatement_t *st;
 
-		QCC_PR_Statement(pr_opcodes+OP_IFNOT_I, fasttrackpossible, NULL, &st);
+		QCC_PR_Statement(pr_opcodes+IfOpForEv(ev_integer, true), fasttrackpossible, NULL, &st);
 		//note that the array size is coded into the globals, one index before the array.
 
 		QCC_PR_Statement3(&pr_opcodes[OP_CONV_FTOI], index, NULL, index, true);	//address stuff is integer based, but standard qc (which this accelerates in supported engines) only supports floats
