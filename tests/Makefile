@@ -26,6 +26,7 @@ testsuite = \
 	pointer_to_pointer \
 	string_access \
 	array_access \
+	if_and_int_float \
 
 all: $(patsubst %,check-%,$(testsuite))
 
