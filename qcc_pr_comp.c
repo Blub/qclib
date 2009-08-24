@@ -1081,6 +1081,44 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 	return false;
 }
 
+pbool QCC_OPCodeEmulated(QCC_opcode_t *op)
+{
+	if (op - pr_opcodes > OP_NUMREALOPS)
+		return true;
+	switch (op - pr_opcodes)
+	{
+	// this IS used in regular QC
+	case OP_STORE_I:
+	case OP_STORE_P:
+	case OP_STORE_IF:
+	case OP_STORE_FI:
+		return true;
+	// those are actually emulated too
+	case OP_ADDSTORE_F:
+	case OP_ADDSTORE_V:
+	case OP_SUBSTORE_F:
+	case OP_SUBSTORE_V:
+	case OP_MULSTORE_F:
+	case OP_MULSTORE_V:
+	case OP_ADDSTOREP_F:
+	case OP_ADDSTOREP_V:
+	case OP_SUBSTOREP_F:
+	case OP_SUBSTOREP_V:
+	case OP_MULSTOREP_F:
+	case OP_MULSTOREP_V:
+	case OP_DIVSTORE_F:
+	case OP_DIVSTOREP_F:
+	case OP_BITSET:
+	case OP_BITSETP:
+	case OP_BITCLR:
+	case OP_BITCLRP:
+		return true;
+	default:
+		//fprintf(stdout, "... %s, %s, %i\n", op->opname, op->name, QCC_OPCodeValid(op));
+		return false;
+	}
+}
+
 #define EXPR_WARN_ABOVE_1 2
 #define EXPR_DISALLOW_COMMA 4
 QCC_def_t *QCC_PR_Expression (int priority, int exprflags);
@@ -5704,7 +5742,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			{
 				if (!(type_c != ev_void && type_c != (*op->type_c)->type))
 				{
-					if ((op - pr_opcodes > OP_NUMREALOPS || QCC_OPCodeValid(op)) && !STRCMP (op->name , oldop->name))	//matches
+					if ((QCC_OPCodeEmulated(op) || QCC_OPCodeValid(op)) && !STRCMP (op->name , oldop->name))	//matches
 					{
 						//return values are never converted - what to?
 	//					if (type_c != ev_void && type_c != op->type_c->type->type)
