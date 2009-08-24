@@ -3,6 +3,7 @@ QCC=../fteqcc.bin
 QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo -TDP1 $(QCFLAGADD)
 
 QCFLAGS_NOWERROR=$(patsubst -Werror,,$(QCFLAGS))
+QCFLAGS_NOFLO=$(patsubst -flo,,$(QCFLAGS))
 
 testsuite = \
 	assign_shuf3 \
@@ -36,6 +37,14 @@ multi_shuffle_33.asm: multi_shuffle_33.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
 	@$(QCC) -Fwasm $(QCFLAGS_NOWERROR) > compile.out
+	@rm -f *.lno *.dat *.log progs.src
+	@rm compile.out
+	@mv qc.asm $@
+
+if_and_int_float.asm: if_and_int_float.qc
+	@echo "test.dat" > progs.src
+	@echo $^ >> progs.src
+	@$(QCC) -Fwasm $(QCFLAGS_NOFLO) > compile.out
 	@rm -f *.lno *.dat *.log progs.src
 	@rm compile.out
 	@mv qc.asm $@
