@@ -458,14 +458,14 @@ QCC_opcode_t pr_opcodes[] =
 {7, "&", "BITAND_FI", 5, ASSOC_LEFT,			&type_float,	&type_integer,	&type_float},
 {7, "|", "BITOR_FI", 5, ASSOC_LEFT,				&type_float,	&type_integer,	&type_float},
 
-{7, "&&", "AND_I", 5, ASSOC_LEFT,				&type_integer,	&type_integer,	&type_integer},
-{7, "||", "OR_I", 5, ASSOC_LEFT,				&type_integer,	&type_integer,	&type_integer},
-{7, "&&", "AND_IF", 5, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
-{7, "||", "OR_IF", 5, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
-{7, "&&", "AND_FI", 5, ASSOC_LEFT,				&type_float,	&type_float,	&type_float},
-{7, "||", "OR_FI", 5, ASSOC_LEFT,				&type_float,	&type_float,	&type_integer},
+{7, "&&", "AND_I", 7, ASSOC_LEFT,				&type_integer,	&type_integer,	&type_integer},
+{7, "||", "OR_I", 7, ASSOC_LEFT,				&type_integer,	&type_integer,	&type_integer},
+{7, "&&", "AND_IF", 7, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
+{7, "||", "OR_IF", 7, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
+{7, "&&", "AND_FI", 7, ASSOC_LEFT,				&type_float,	&type_integer,	&type_float},
+{7, "||", "OR_FI", 7, ASSOC_LEFT,				&type_float,	&type_integer,	&type_integer},
 {7, "!=", "NE_IF", 5, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
-{7, "!=", "NE_FI", 5, ASSOC_LEFT,				&type_integer,	&type_float,	&type_integer},
+{7, "!=", "NE_FI", 5, ASSOC_LEFT,				&type_float,	&type_integer,	&type_integer},
 
 	
 
@@ -805,7 +805,13 @@ QCC_opcode_t *opcodeprioritized[TOP_PRIORITY+1][128] =
 		NULL
 	}, {	//7
 		&pr_opcodes[OP_AND],
+		&pr_opcodes[OP_AND_I],
+		&pr_opcodes[OP_AND_IF],
+		&pr_opcodes[OP_AND_FI],
 		&pr_opcodes[OP_OR],
+		&pr_opcodes[OP_OR_I],
+		&pr_opcodes[OP_OR_IF],
+		&pr_opcodes[OP_OR_FI],
 		NULL
 	}
 };
@@ -5232,6 +5238,9 @@ int QCC_canConv(QCC_def_t *from, etype_t to)
 */
 	if (from->type->type == ev_integer && to == ev_function)
 		return 1;
+
+	if (from->type->type == ev_string && to == ev_integer)
+		return 0;
 
 	return -100;
 }
