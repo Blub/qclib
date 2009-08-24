@@ -5699,7 +5699,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			{
 				if (!(type_c != ev_void && type_c != (*op->type_c)->type))
 				{
-					if (QCC_OPCodeValid(op) && !STRCMP (op->name , oldop->name))	//matches
+					if ((op - pr_opcodes > OP_NUMREALOPS || QCC_OPCodeValid(op)) && !STRCMP (op->name , oldop->name))	//matches
 					{
 						//return values are never converted - what to?
 	//					if (type_c != ev_void && type_c != op->type_c->type->type)
