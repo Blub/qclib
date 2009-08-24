@@ -1175,6 +1175,8 @@ freeoffset_t *freeofs;
 
 static size_t IfOpForEv(int ev, pbool not)
 {
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+		return (not ? OP_IFNOT : OP_IF);
 	if (ev == ev_float)
 		return (not ? OP_IFNOT : OP_IF);
 	return (not ? OP_IFNOT_I : OP_IF_I);
@@ -1182,6 +1184,8 @@ static size_t IfOpForEv(int ev, pbool not)
 
 static size_t IfOpForType(QCC_type_t *type, pbool not)
 {
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+		return (not ? OP_IFNOT : OP_IF);
 	if (!type)
 		return (not ? OP_IFNOT_I : OP_IF_I);
 	return IfOpForEv(type->type, not);
@@ -1189,7 +1193,8 @@ static size_t IfOpForType(QCC_type_t *type, pbool not)
 
 static size_t IfOpForDef(QCC_def_t *def, pbool not)
 {
-	fflush(stdout);
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+		return (not ? OP_IFNOT : OP_IF);
 	if (!def)
 		return (not ? OP_IFNOT_I : OP_IF_I);
 	return IfOpForType(def->type, not);
