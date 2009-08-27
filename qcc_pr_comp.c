@@ -1011,6 +1011,11 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_CONV_ITOF:
 		case OP_CONV_FTOI:
 			return true;	//these look fine.
+		case OP_CP_ITOF:
+		case OP_CP_FTOI:
+			if (qcc_targetformat == QCF_DARKPLACES1)
+				return true;
+			return false;	//DPFIXME: These are not bounds checked at all.
 
 		case OP_LOADP_C:        //load character from a string
 		case OP_STOREP_C: // store a char in a string
@@ -1034,9 +1039,6 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_IF_I:
 			return true;
 
-		case OP_CP_ITOF:
-		case OP_CP_FTOI:
-			return false;	//DPFIXME: These are not bounds checked at all.
 		case OP_GLOBALADDRESS:
 			return true;	//DPFIXME: DP will reject these pointers if they are ever used.
 		case OP_POINTER_ADD:

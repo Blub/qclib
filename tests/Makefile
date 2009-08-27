@@ -25,6 +25,7 @@ testsuite = \
 	pointer_function \
 	pointer_from_field \
 	pointer_to_pointer \
+	pointer_access \
 	string_access \
 	array_access \
 	if_and_int_float \
