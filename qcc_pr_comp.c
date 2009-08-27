@@ -984,18 +984,6 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_CASERANGE:
 			return true;
 
-		//assuming the pointers here are fine, the return values are a little strange.
-		//but its fine
-		case OP_ADDSTORE_F:
-		case OP_ADDSTORE_V:
-		case OP_ADDSTOREP_F: // e.f += f
-		case OP_ADDSTOREP_V: // e.v += v
-		case OP_SUBSTORE_F:
-		case OP_SUBSTORE_V:
-		case OP_SUBSTOREP_F: // e.f += f
-		case OP_SUBSTOREP_V: // e.v += v
-			return true;
-
 		case OP_LOADA_I:
 		case OP_LOADA_F:
 		case OP_LOADA_FLD:
@@ -1021,12 +1009,27 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_STOREP_C: // store a char in a string
 			return true; //DPFIXME: dp's bounds check may give false positives with expected uses.
 
+		//assuming the pointers here are fine, the return values are a little strange.
+		//but its fine
+		case OP_ADDSTORE_F:
+		case OP_ADDSTORE_V:
+		case OP_SUBSTORE_F:
+		case OP_SUBSTORE_V:
 		case OP_MULSTORE_F:
 		case OP_MULSTORE_V:
+		case OP_DIVSTORE_F:
+			if (qcc_targetformat == QCF_DARKPLACES1)
+				return false; // store to OPB, we don't want that
+
+		case OP_ADDSTOREP_F: // e.f += f
+		case OP_ADDSTOREP_V: // e.v += v
+		case OP_SUBSTOREP_F: // e.f += f
+		case OP_SUBSTOREP_V: // e.v += v
 		case OP_MULSTOREP_F:
 		case OP_MULSTOREP_V: // e.v *= f
-		case OP_DIVSTORE_F:
 		case OP_DIVSTOREP_F:
+			return true;
+
 		case OP_STORE_IF:
 		case OP_STORE_FI:
 		case OP_STOREP_IF: // store a value to a pointer
