@@ -1040,7 +1040,7 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_GLOBALADDRESS:
 			return true;	//DPFIXME: DP will reject these pointers if they are ever used.
 		case OP_POINTER_ADD:
-			return true;	//just maths.
+			return false;	//FIXME: we do not use real pointersizes in DP, so it's *1 instead of *4
 
 		case OP_ADD_SF: //(char*)c = (char*)a + (float)b
 		case OP_SUB_S:  //(float)c = (char*)a - (char*)b
