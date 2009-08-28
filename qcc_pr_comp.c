@@ -1930,7 +1930,7 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 					return QCC_MakeIntDef((int)G_FLOAT(var_a->ofs+0));
 				case OP_CONV_ITOF:
 					optres_constantarithmatic++;
-					return QCC_MakeIntDef((float)G_INT(var_a->ofs+0));
+					return QCC_MakeFloatDef((float)G_INT(var_a->ofs+0));
 				}
 			}
 		}
