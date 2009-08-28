@@ -1115,6 +1115,8 @@ pbool QCC_OPCodeEmulated(QCC_opcode_t *op)
 	case OP_DIVSTOREP_F:
 	case OP_BITSET:
 	case OP_BITSETP:
+	case OP_BITSET_I:
+	case OP_BITSETP_I:
 	case OP_BITCLR:
 	case OP_BITCLRP:
 		return true;
@@ -1923,6 +1925,12 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 						return var_b;
 					}
 					break;
+				case OP_CONV_FTOI:
+					optres_constantarithmatic++;
+					return QCC_MakeIntDef((int)G_FLOAT(var_a->ofs+0));
+				case OP_CONV_ITOF:
+					optres_constantarithmatic++;
+					return QCC_MakeIntDef((float)G_INT(var_a->ofs+0));
 				}
 			}
 		}
@@ -5288,7 +5296,7 @@ int QCC_canConv(QCC_def_t *from, etype_t to)
 		return 1;
 
 	if (from->type->type == ev_string && to == ev_integer)
-		return 0;
+		return 4;
 
 	return -100;
 }
