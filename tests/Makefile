@@ -4,6 +4,7 @@ QCFLAGS ?= -Werror -Wall -Wno-mundane -O3 -Ono-c -Ono-cs -flo -TDP1 $(QCFLAGADD)
 
 QCFLAGS_NOWERROR=$(patsubst -Werror,,$(QCFLAGS))
 QCFLAGS_NOFLO=$(patsubst -flo,,$(QCFLAGS))
+QCFLAGS_NO_FLOWERROR=$(patsubst -flo,,$(QCFLAGS_NOWERROR))
 
 testsuite = \
 	assign_shuf3 \
@@ -29,6 +30,7 @@ testsuite = \
 	string_access \
 	array_access \
 	if_and_int_float \
+	int_bitflags \
 
 all: $(patsubst %,check-%,$(testsuite))
 
@@ -45,7 +47,7 @@ multi_shuffle_33.asm: multi_shuffle_33.qc
 if_and_int_float.asm: if_and_int_float.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
-	@$(QCC) -Fwasm $(QCFLAGS_NOFLO) > compile.out
+	@$(QCC) -Fwasm $(QCFLAGS_NO_FLOWERROR) > compile.out
 	@rm -f *.lno *.dat *.log progs.src
 	@rm compile.out
 	@mv qc.asm $@

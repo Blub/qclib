@@ -15,13 +15,11 @@ local vector temp_1;
 void (vector, vector, POINTER TYPE) vecadd2;
 void(vector a, vector b, POINTER TYPE c) vecadd2 = asm
 {
-local float temp_0;
+local vector temp_0;
 local vector temp_1;
-local vector temp_2;
-	C_FTOI	0.000000,	temp_0;
-	ADD_I		c,	temp_0,	temp_1_x;
-	ADD_V		a,	b,	temp_2;
-	STOREP_V	temp_2_x,	temp_1;
+	ADD_I		c,	0,	temp_0_x;
+	ADD_V		a,	b,	temp_1;
+	STOREP_V	temp_1_x,	temp_0;
 	DONE;
 }
 

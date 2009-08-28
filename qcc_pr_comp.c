@@ -5298,6 +5298,11 @@ int QCC_canConv(QCC_def_t *from, etype_t to)
 	if (from->type->type == ev_string && to == ev_integer)
 		return 4;
 
+	/*
+	if (from->type->type == ev_float && to == ev_integer)
+		return 1;
+	*/
+
 	return -100;
 }
 

@@ -6,6 +6,7 @@ float test()
 	int i;
 	string s;
 
+	// strings make implicit conversion warnings
 	f && i; chunk();
 	f && s; chunk();
 	i && s; chunk();
