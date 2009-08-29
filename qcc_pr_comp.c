@@ -6157,7 +6157,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "while(string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT_S], e, 0, &patch1));
 			}
-			else if (!typecmp( e->type, type_float) && flag_iffloat)	//special case, as negative 0 is also zero
+			else if (!typecmp( e->type, type_float) && (flag_iffloat||QCC_OPCodeValid(&pr_opcodes[OP_IFNOT_F])))	//special case, as negative 0 is also zero
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT_F], e, 0, &patch1));
 			else
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT], e, 0, &patch1));
@@ -6308,7 +6308,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "do {} while(string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_S], e, NULL, &patch2));
 			}
-			else if (!typecmp( e->type, type_float) && flag_iffloat)
+			else if (!typecmp( e->type, type_float) && (flag_iffloat||QCC_OPCodeValid(&pr_opcodes[OP_IFNOT_F])))
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_F], e, NULL, &patch2));
 			else
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF], e, NULL, &patch2));
@@ -6406,7 +6406,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "if not(string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_S], e, 0, &patch1));
 			}
-			else if (!typecmp( e->type, type_float) && flag_iffloat)
+			else if (!typecmp( e->type, type_float) && (flag_iffloat||QCC_OPCodeValid(&pr_opcodes[OP_IFNOT_F])))
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF_F], e, 0, &patch1));
 			else
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IF], e, 0, &patch1));
@@ -6418,7 +6418,7 @@ void QCC_PR_ParseStatement (void)
 				QCC_PR_ParseWarning(WARN_IFSTRING_USED, "if (string) can result in bizzare behaviour");
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT_S], e, 0, &patch1));
 			}
-			else if (!typecmp( e->type, type_float) && flag_iffloat)
+			else if (!typecmp( e->type, type_float) && (flag_iffloat||QCC_OPCodeValid(&pr_opcodes[OP_IFNOT_F])))
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT_F], e, 0, &patch1));
 			else
 				QCC_FreeTemp(QCC_PR_Statement (&pr_opcodes[OP_IFNOT], e, 0, &patch1));
