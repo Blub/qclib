@@ -1231,6 +1231,8 @@ static size_t IfOpForEv(int ev, pbool not)
 		return (not ? OP_IFNOT : OP_IF);
 	if (ev == ev_float)
 		return (not ? OP_IFNOT_F : OP_IF_F);
+	if (ev == ev_string)
+		return (not ? OP_IFNOT_S : OP_IF_S);
 	return (not ? OP_IFNOT : OP_IF);
 }
 
@@ -5361,7 +5363,7 @@ int QCC_canConv(QCC_def_t *from, etype_t to)
 		return 1;
 
 	if (from->type->type == ev_string && to == ev_integer)
-		return 4;
+		return 1;
 
 	/*
 	if (from->type->type == ev_float && to == ev_integer)

@@ -22,6 +22,7 @@ testsuite = \
 	unary_minus \
 	ternary_target \
 	ternary_term \
+	if_string \
 	\
 	pointer_function \
 	pointer_from_field \
