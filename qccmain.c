@@ -105,8 +105,6 @@ QCC_type_t *qcc_typeinfo;
 int numtypeinfos;
 int maxtypeinfos;
 
-static pbool pr_werror;
-
 
 struct {
 	char *name;
