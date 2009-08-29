@@ -1231,7 +1231,7 @@ static size_t IfOpForEv(int ev, pbool not)
 		return (not ? OP_IFNOT : OP_IF);
 	if (ev == ev_float)
 		return (not ? OP_IFNOT_F : OP_IF_F);
-	if (ev == ev_string)
+	if (ev == ev_string && flag_ifstring)
 		return (not ? OP_IFNOT_S : OP_IF_S);
 	return (not ? OP_IFNOT : OP_IF);
 }
