@@ -23,6 +23,7 @@ testsuite = \
 	ternary_target \
 	ternary_term \
 	if_string \
+	if_string_flag \
 	\
 	pointer_function \
 	pointer_from_field \
@@ -52,6 +53,14 @@ if_and_int_float.asm: if_and_int_float.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
 	@$(QCC) -Fwasm $(QCFLAGS_NO_FLOWERROR) > compile.out
+	@rm -f *.lno *.dat *.log progs.src
+	@rm compile.out
+	@mv qc.asm $@
+
+if_string_flag.asm: if_string.qc
+	@echo "test.dat" > progs.src
+	@echo $^ >> progs.src
+	@$(QCC) -Fwasm $(QCFLAGS_NO_WERROR) -fifstring > compile.out
 	@rm -f *.lno *.dat *.log progs.src
 	@rm compile.out
 	@mv qc.asm $@
