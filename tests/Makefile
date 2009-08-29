@@ -24,6 +24,7 @@ testsuite = \
 	ternary_term \
 	if_string \
 	if_string_flag \
+	if_i_without_op_support \
 	\
 	pointer_function \
 	pointer_from_field \
@@ -50,6 +51,14 @@ multi_shuffle_33.asm: multi_shuffle_33.qc
 	@mv qc.asm $@
 
 if_and_int_float.asm: if_and_int_float.qc
+	@echo "test.dat" > progs.src
+	@echo $^ >> progs.src
+	@$(QCC) -Fwasm $(QCFLAGS_NO_FLOWERROR) > compile.out
+	@rm -f *.lno *.dat *.log progs.src
+	@rm compile.out
+	@mv qc.asm $@
+
+if_i_without_op_support.asm: if_i_without_op_support.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
 	@$(QCC) -Fwasm $(QCFLAGS_NO_FLOWERROR) > compile.out
