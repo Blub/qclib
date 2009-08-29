@@ -207,8 +207,8 @@ enum {
 	OP_EQ_I,
 	OP_NE_I,
 
-	OP_IFNOTS,
-	OP_IFS,
+	OP_IFNOT_S,
+	OP_IF_S,
 
 	OP_NOT_I,		//130
 
@@ -229,7 +229,7 @@ enum {
 	OP_LOADA_FNC,
 	OP_LOADA_I,
 
-	OP_STORE_P,
+	OP_STORE_P,	//152... erm.. wait...
 	OP_LOAD_P,
 
 	OP_LOADP_F,
@@ -311,9 +311,8 @@ enum {
 	OP_SWITCH_I,//hmm.
 	OP_GLOAD_V,
 
-//extensions for fixing stuff
-	OP_IF_I,
-	OP_IFNOT_I,
+	OP_IF_F,
+	OP_IFNOT_F,
 
 	OP_NUMREALOPS,
 
