@@ -14,6 +14,7 @@ extern int optres_test1;
 extern int optres_test2;
 
 int writeasm;
+static pbool pr_werror;
 
 
 pbool QCC_PR_SimpleGetToken (void);
@@ -2824,6 +2825,7 @@ void QCC_main (int argc, char **argv)	//as part of the quake engine
 	{
 		*compiler_flag[p].enabled = compiler_flag[p].flags & FLAG_ASDEFAULT;
 	}
+	pr_werror = false;
 
 	QCC_SetDefaultProperties();
 
@@ -3218,26 +3220,20 @@ void QCC_FinishCompile(void)
 		}
 	}*/
 
-	
+	if (pr_werror && pr_warning_count != 0)
+		QCC_Error (ERR_PARSEERRORS, "compilation errors");
 
-	if (!pr_werror || pr_warning_count == 0)
-	{
 // write progdefs.h
-		crc = QCC_PR_WriteProgdefs ("progdefs.h");
+	crc = QCC_PR_WriteProgdefs ("progdefs.h");
 	
 // write data file
-		donesomething = QCC_WriteData (crc);
+	donesomething = QCC_WriteData (crc);
 	
 // regenerate bmodels if -bspmodels
-		QCC_BspModels ();
+	QCC_BspModels ();
 
 // report / copy the data files
-		QCC_CopyFiles ();
-	}
-	else
-	{
-		QCC_Error(ERR_WERROR, "warnings are treated like errors");
-	}
+	QCC_CopyFiles ();
 
 	if (donesomething)
 	{
