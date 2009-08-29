@@ -32,7 +32,10 @@ testsuite = \
 	if_and_int_float \
 	int_bitflags \
 
-all: $(patsubst %,check-%,$(testsuite))
+testsuite_fail = \
+	unary_not_warning \
+
+all: $(patsubst %,check-%,$(testsuite)) $(patsubst %,fail-%,$(testsuite_fail))
 
 passall: $(patsubst %,pass/%.asm,$(testsuite))
 
@@ -67,6 +70,14 @@ check-%: %.asm
 	@diff -up $^ pass/$^ > err.diff
 	@rm err.diff
 	@rm $^
+	@echo PASSED $^
+
+# this must error
+fail-%: %.qc
+	@echo "test.dat" > progs.src
+	@echo $^ >> progs.src
+	@sh -c "if $(QCC) -Fwasm $(QCFLAGS) > compile.out; then echo 'FAILED $^'; false; else true; fi"
+	@rm -f *.lno *.dat *.log progs.src
 	@echo PASSED $^
 
 clean:

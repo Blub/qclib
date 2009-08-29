@@ -7,7 +7,7 @@ int test()
 	flags = flags | 1;
 	bit = 4;
 	flags = flags | bit;
-	flags |= ~3;
+	flags |= 3i;
 	flags |= bit;
 	flags |= (int)bitf;
 
