@@ -71,7 +71,7 @@ if_i_without_op_support.asm: if_i_without_op_support.qc
 if_i_without_op_support2.asm: if_i_without_op_support.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
-	@$(QCC) -Fwasm $(patsubst -TDP1,,$(QCFLAGS_NO_FLOWERROR)) -fno-iffloat > compile.out
+	@$(QCC) -Fwasm $(patsubst -TDP1,,$(QCFLAGS_NO_FLOWERROR)) -fiffloat > compile.out
 	@rm -f *.lno *.dat *.log progs.src
 	@rm compile.out
 	@mv qc.asm $@
