@@ -77,7 +77,7 @@ fail-%: %.qc
 	@echo "test.dat" > progs.src
 	@echo $^ >> progs.src
 	@sh -c "if $(QCC) -Fwasm $(QCFLAGS) > compile.out; then echo 'FAILED $^'; false; else true; fi"
-	@rm -f *.lno *.dat *.log progs.src
+	@rm -f *.lno *.dat *.log progs.src qc.asm compile.out
 	@echo PASSED $^
 
 clean:
