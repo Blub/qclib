@@ -500,9 +500,6 @@ QCC_opcode_t pr_opcodes[] =
 {7, "<SWITCH_I>", "SWITCH_I",				-1, ASSOC_LEFT,	&type_void, NULL, &type_void},
 {7, "<>",	"GLOAD_S",		-1, ASSOC_LEFT,				&type_float,	&type_float,	&type_float},
  
- {6, "<IF>", "IF_I",			-1, ASSOC_RIGHT,				&type_integer, NULL, &type_void},
- {6, "<IFNOT>", "IFNOT_I",	-1, ASSOC_RIGHT,			&type_integer, NULL, &type_void},
-
 {6, "<IF_F>",	"IF_F",		-1, ASSOC_RIGHT,				&type_float, NULL, &type_void},
 {6, "<IFNOT_F>","IFNOT_F",	-1, ASSOC_RIGHT,				&type_float, NULL, &type_void},
 
@@ -1044,12 +1041,12 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_STORE_I:
 		case OP_IFNOT_S:
 		case OP_IF_S:
-		case OP_IFNOT_F:
-		case OP_IF_F:
 			return true;
 		
 		case OP_IFNOT_F:	//added, but not in dp yet
 		case OP_IF_F:
+			if (qcc_targetformat == QCF_DARKPLACES1)
+				return true;
 			return false;
 
 		case OP_GLOBALADDRESS:
@@ -1230,28 +1227,28 @@ freeoffset_t *freeofs;
 
 static size_t IfOpForEv(int ev, pbool not)
 {
-	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_F]))
 		return (not ? OP_IFNOT : OP_IF);
 	if (ev == ev_float)
-		return (not ? OP_IFNOT : OP_IF);
-	return (not ? OP_IFNOT_I : OP_IF_I);
+		return (not ? OP_IFNOT_F : OP_IF_F);
+	return (not ? OP_IFNOT : OP_IF);
 }
 
 static size_t IfOpForType(QCC_type_t *type, pbool not)
 {
-	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_F]))
 		return (not ? OP_IFNOT : OP_IF);
 	if (!type)
-		return (not ? OP_IFNOT_I : OP_IF_I);
+		return (not ? OP_IFNOT : OP_IF);
 	return IfOpForEv(type->type, not);
 }
 
 static size_t IfOpForDef(QCC_def_t *def, pbool not)
 {
-	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_I]))
+	if (!QCC_OPCodeValid(&pr_opcodes[OP_IF_F]))
 		return (not ? OP_IFNOT : OP_IF);
 	if (!def)
-		return (not ? OP_IFNOT_I : OP_IF_I);
+		return (not ? OP_IFNOT : OP_IF);
 	return IfOpForType(def->type, not);
 }
 
@@ -2060,8 +2057,6 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 	case OP_IFNOT_F:
 	case OP_IF:
 	case OP_IFNOT:
-	case OP_IF_I:
-	case OP_IFNOT_I:
 //		if (var_a->type->type == ev_function && !var_a->temp)
 //			QCC_PR_ParseWarning(WARN_CONSTANTCOMPARISON, "Result of comparison is constant");
 		if (var_a->constant && !var_a->temp)
@@ -4742,10 +4737,6 @@ reloop:
 								break;
 							case ev_vector:
 								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_V], d, ao_val, NULL);	//get pointer to precise def.
-								nd->type = d->type->aux_type;
-								break;
-							case ev_vector:
-								nd = QCC_PR_Statement(&pr_opcodes[OP_LOADP_V], d, QCC_PR_Statement (&pr_opcodes[OP_CONV_FTOI], ao, 0, NULL), NULL);	//get pointer to precise def.
 								nd->type = d->type->aux_type;
 								break;
 							case ev_integer:

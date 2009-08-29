@@ -6,9 +6,8 @@ void(vector a, vector b, POINTER TYPE c) vecadd = asm
 {
 local vector temp_0;
 local vector temp_1;
-	ADD_I		c,	offset_0,	temp_1_x;
 	ADD_V		a,	b,	temp_0;
-	STOREP_V	temp_0_x,	temp_1;
+	STOREP_V	temp_0_x,	c;
 	DONE;
 }
 

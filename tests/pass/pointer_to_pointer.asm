@@ -6,10 +6,8 @@ void () assign;
 void() assign = asm
 {
 local float temp_0;
-	ADDRESS	self,	value,	temp_0;
-	STORE_P	temp_0,	v;
-	GLOBALADDRESS	v,	offset_0,	temp_0;
-	STORE_P	temp_0,	p;
+	ADDRESS	self,	value,	v;
+	GLOBALADDRESS	v,	offset_0,	p;
 	DONE;
 }
 
