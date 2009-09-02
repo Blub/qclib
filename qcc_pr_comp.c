@@ -1026,7 +1026,6 @@ pbool QCC_OPCodeValid(QCC_opcode_t *op)
 		case OP_DIVSTOREP_F:
 		case OP_STORE_IF:
 		case OP_STORE_FI:
-		case OP_STORE_P:
 		case OP_STOREP_IF: // store a value to a pointer
 		case OP_STOREP_FI:
 		case OP_STORE_P:
