@@ -5042,7 +5042,8 @@ reloop:
 	}
 	if (d->type->type == ev_vector)
 	{
-		while (QCC_PR_CheckToken("\\"))
+		// NOTE: allowing vec.xyz now too
+		while (QCC_PR_CheckToken("\\") || QCC_PR_CheckToken("."))
 		{
 			char *name = QCC_PR_ParseName();
 			d = QCC_PR_ParseVectorMember(name, d);
@@ -5650,7 +5651,7 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 				op = &pr_opcodes[OP_ADD_V];
 				sim_opt = ".*";
 			}
-			else if(priority == VEC_MEM_PRIORITY && !strcmp(pr_token, "\\"))
+			else if(priority == VEC_MEM_PRIORITY && (!strcmp(pr_token, "\\") || !strcmp(pr_token, "."))) // NOTE: vec.xyz
 			{
 				opnum = OP_LOAD_F;
 				op = &pr_opcodes[OP_LOAD_F];
@@ -5659,7 +5660,8 @@ QCC_def_t *QCC_PR_Expression (int priority, int exprflags)
 			else if (!QCC_PR_CheckToken (op->name))
 				continue;
 
-			if (QCC_PR_CheckToken("\\") && (e->type->type == ev_vector || e->type->type == ev_shuffle3))
+			// NOTE: vec.xyz
+			if ((QCC_PR_CheckToken("\\") || QCC_PR_CheckToken(".")) && (e->type->type == ev_vector || e->type->type == ev_shuffle3))
 			{
 				char *mem = QCC_PR_ParseName();
 				e = QCC_PR_ParseVectorMember(mem, e);
