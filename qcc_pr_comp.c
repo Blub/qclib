@@ -538,7 +538,7 @@ QCC_opcode_t pr_opcodes[] =
  {7, "+=", "OP_ADDSTOREP_FI",	6,	ASSOC_RIGHT_RESULT,		&type_pointer, &type_integer, &type_float},
  {7, "-=", "OP_SUBSTORE_FI",	6,	ASSOC_RIGHT_RESULT,		&type_pointer, &type_integer, &type_float},
  {7, "-=", "OP_SUBSTOREP_FI",	6,	ASSOC_RIGHT_RESULT,		&type_pointer, &type_integer, &type_float},
-	 
+
  {0, NULL}
 };
 
