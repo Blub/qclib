@@ -27,6 +27,7 @@ testsuite = \
 	if_i_without_op_support \
 	if_i_without_op_support2 \
 	if_i_with_op_support \
+	vec_muleq_float \
 	\
 	pointer_function \
 	pointer_from_field \
