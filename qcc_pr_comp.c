@@ -2378,12 +2378,17 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 			//don't chain these... this expansion is not the same.
 			{
 				int st;
-
+				int need_lock = false;
 				for (st = numstatements-2; st>=0; st--)
 				{
 					if (statements[st].op == OP_ADDRESS)
 						if (statements[st].c == var_b->ofs)
 							break;
+
+					if (statements[st].op >= OP_CALL0 && statements[st].op <= OP_CALL8 || statements[st].op >= OP_CALL1H && statements[st].op <= OP_CALL8H)
+						need_lock = true;
+
+					//printf("%s\n", pr_opcodes[statements[st].op].opname);
 
 					if (statements[st].c == var_b->ofs)
 						QCC_PR_ParseWarning(0, "Temp-reuse may have broken your %s", op->name);
@@ -2391,6 +2396,8 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 				if (st < 0)
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_F: pointer was not generated from previous statement");
 				var_c = QCC_GetTemp(*op->type_c);
+				if(need_lock)
+					var_c->temp->scope = pr_scope; // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
@@ -2495,6 +2502,7 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 
 			op = &pr_opcodes[OP_STOREP_F];
 			QCC_FreeTemp(var_c);
+
 			var_c = NULL;
 			QCC_FreeTemp(var_b);
 
@@ -2511,11 +2519,15 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 			//don't chain these... this expansion is not the same.
 			{
 				int st;
+				int need_lock = false;
 				for (st = numstatements-2; st>=0; st--)
 				{
 					if (statements[st].op == OP_ADDRESS)
 						if (statements[st].c == var_b->ofs)
 							break;
+
+					if (statements[st].op >= OP_CALL0 && statements[st].op <= OP_CALL8 || statements[st].op >= OP_CALL1H && statements[st].op <= OP_CALL8H)
+						need_lock = true;
 
 					if (statements[st].c == var_b->ofs)
 						QCC_PR_ParseWarning(0, "Temp-reuse may have broken your %s", op->name);
@@ -2523,6 +2535,8 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 				if (st < 0)
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_V couldn't find pointer generation");
 				var_c = QCC_GetTemp(*op->type_c);
+				if(need_lock)
+					var_c->temp->scope = pr_scope; // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
