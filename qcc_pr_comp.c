@@ -1518,7 +1518,12 @@ static void QCC_LockActiveTemps(void)
 			t->scope = pr_scope;
 		t = t->next;
 	}
-	
+}
+
+static void QCC_LockTemp(QCC_def_t *d)
+{
+	if (d->temp && d->temp->used)
+		d->temp->scope = pr_scope;
 }
 
 static void QCC_RemapLockedTemp(temp_t *t, int firststatement, int laststatement)
@@ -2397,7 +2402,7 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_F: pointer was not generated from previous statement");
 				var_c = QCC_GetTemp(*op->type_c);
 				if(need_lock)
-					var_c->temp->scope = pr_scope; // this will cause the temp to be remapped by QCC_RemapLockedTemps
+					QCC_LockTemp(var_c); // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
@@ -2536,7 +2541,7 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_V couldn't find pointer generation");
 				var_c = QCC_GetTemp(*op->type_c);
 				if(need_lock)
-					var_c->temp->scope = pr_scope; // this will cause the temp to be remapped by QCC_RemapLockedTemps
+					QCC_LockTemp(var_c); // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
