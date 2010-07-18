@@ -2205,7 +2205,7 @@ int QCC_PR_CheakCompConst(void)
 			{
 				int p;
 				char *start;
-				char buffer[1024];
+				char buffer[MAXCONSTANTVALUELENGTH];
 				char *paramoffset[MAXCONSTANTPARAMS+1];
 				int param=0;
 				int plevel=0;
@@ -2272,6 +2272,8 @@ int QCC_PR_CheakCompConst(void)
 						if (!*pr_file_p)
 							break;
 						buffer[p++] = *pr_file_p++;
+						if(p >= sizeof(buffer))
+							QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 					}
 					buffer[p] = 0;
 
@@ -2280,9 +2282,13 @@ int QCC_PR_CheakCompConst(void)
 						do
 						{
 							buffer[p++] = *pr_file_p;
+							if(p >= sizeof(buffer))
+								QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 							++pr_file_p;
 						} while( (pr_file_p[-1] == '\\' || pr_file_p[0] != '\"') && *pr_file_p && *pr_file_p != '\n' );
 						buffer[p++] = *pr_file_p; // copy the end-quote too
+						if(p >= sizeof(buffer))
+							QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 						buffer[p] = 0;
 						++pr_file_p; // and skip it
 						continue;
@@ -2305,16 +2311,22 @@ int QCC_PR_CheakCompConst(void)
 							{
 								if (!STRCMP(qcc_token, c->params[p]))
 								{
-									strcat(buffer, "\"");
-									strcat(buffer, paramoffset[p]);
-									strcat(buffer, "\"");
+									strncat(buffer, "\"", sizeof(buffer));
+									strncat(buffer, paramoffset[p], sizeof(buffer));
+									strncat(buffer, "\"", sizeof(buffer));
+									buffer[sizeof(buffer) - 1] = 0;
+									if(strlen(buffer) >= sizeof(buffer) - 1)
+										QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 									break;
 								}
 							}
 							if (p == param)
 							{
-								strcat(buffer, "#");
-								strcat(buffer, qcc_token);
+								strncat(buffer, "#", sizeof(buffer));
+								strncat(buffer, qcc_token, sizeof(buffer));
+								buffer[sizeof(buffer) - 1] = 0;
+								if(strlen(buffer) >= sizeof(buffer) - 1)
+									QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 								//QCC_PR_ParseWarning(0, "Stringification ignored");
 							}
 							continue;	//already did this one
@@ -2329,12 +2341,20 @@ int QCC_PR_CheakCompConst(void)
 					{
 						if (!STRCMP(qcc_token, c->params[p]))
 						{
-							strcat(buffer, paramoffset[p]);
+							strncat(buffer, paramoffset[p], sizeof(buffer));
+							buffer[sizeof(buffer) - 1] = 0;
+							if(strlen(buffer) >= sizeof(buffer) - 1)
+								QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
 							break;
 						}
 					}
 					if (p == param)
-						strcat(buffer, qcc_token);
+					{
+						strncat(buffer, qcc_token, sizeof(buffer));
+						buffer[sizeof(buffer) - 1] = 0;
+						if(strlen(buffer) >= sizeof(buffer) - 1)
+							QCC_PR_ParseError(ERR_TOOLONGMACROEXPANSION, "Too long macro expansion");
+					}
 				}
 
 				for (p = 0; p < param-1; p++)
