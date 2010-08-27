@@ -94,6 +94,9 @@ hashtable_t globalstable;
 hashtable_t localstable;
 hashtable_t floatconstdefstable;
 hashtable_t stringconstdefstable;
+hashtable_t stringconstdefstable_dotranslate;
+int dotranslate;
+int dotranslate_count;
 
 pbool qccwarningdisabled[WARN_MAX];
 
@@ -2859,6 +2862,9 @@ void QCC_main (int argc, char **argv)	//as part of the quake engine
 	Hash_InitTable(&localstable, MAX_REGS, qccHunkAlloc(Hash_BytesForBuckets(MAX_REGS)));
 	Hash_InitTable(&floatconstdefstable, MAX_REGS+1, qccHunkAlloc(Hash_BytesForBuckets(MAX_REGS+1)));
 	Hash_InitTable(&stringconstdefstable, MAX_REGS, qccHunkAlloc(Hash_BytesForBuckets(MAX_REGS)));
+	Hash_InitTable(&stringconstdefstable_dotranslate, MAX_REGS, qccHunkAlloc(Hash_BytesForBuckets(MAX_REGS)));
+	dotranslate=0;
+	dotranslate_count=0;
 	
 //	pr_global_defs = (QCC_def_t **)qccHunkAlloc(sizeof(QCC_def_t *) * MAX_REGS);
 
