@@ -2921,6 +2921,7 @@ memset(pr_immediate_string, 0, sizeof(pr_immediate_string));
 		printf ("-Wall to give a stupid number of warnings\n");
 		printf ("-Ttarget to set a output format\n");
 		printf ("-Fautoproto to enable automatic prototyping\n");
+		printf ("-Fsubscope to enable subscopes\n");
 
 		qcc_compileactive = false;
 		return;
