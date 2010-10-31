@@ -74,6 +74,7 @@ pbool flag_caseinsensative;	//symbols will be matched to an insensative case if 
 pbool flag_laxcasts;		//Allow lax casting. This'll produce loadsa warnings of course. But allows compilation of certain dodgy code.
 pbool flag_hashonly;		//Allows use of only #constant for precompiler constants, allows certain preqcc using mods to compile
 pbool flag_fasttrackarrays;	//Faster arrays, dynamically detected, activated only in supporting engines.
+pbool flag_msvcstyle;		//MSVC style warnings, so msvc's ide works properly
 pbool flag_assume_integer;	//5 - is that an integer or a float? qcc says float. but we support int too, so maybe we want that instead?
 
 pbool opt_overlaptemps;		//reduce numpr_globals by reuse of temps. When they are not needed they are freed for reuse. The way this is implemented is better than frikqcc's. (This is the single most important optimisation)
@@ -1445,12 +1446,7 @@ static void QCC_LockActiveTemps(void)
 			t->scope = pr_scope;
 		t = t->next;
 	}
-}
-
-static void QCC_LockTemp(QCC_def_t *d)
-{
-	if (d->temp && d->temp->used)
-		d->temp->scope = pr_scope;
+	
 }
 
 static void QCC_RemapLockedTemp(temp_t *t, int firststatement, int laststatement)
@@ -2304,17 +2300,12 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 			//don't chain these... this expansion is not the same.
 			{
 				int st;
-				int need_lock = false;
+
 				for (st = numstatements-2; st>=0; st--)
 				{
 					if (statements[st].op == OP_ADDRESS)
 						if (statements[st].c == var_b->ofs)
 							break;
-
-					if (statements[st].op >= OP_CALL0 && statements[st].op <= OP_CALL8 || statements[st].op >= OP_CALL1H && statements[st].op <= OP_CALL8H)
-						need_lock = true;
-
-					//printf("%s\n", pr_opcodes[statements[st].op].opname);
 
 					if (statements[st].c == var_b->ofs)
 						QCC_PR_ParseWarning(0, "Temp-reuse may have broken your %s", op->name);
@@ -2322,8 +2313,6 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 				if (st < 0)
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_F: pointer was not generated from previous statement");
 				var_c = QCC_GetTemp(*op->type_c);
-				if(need_lock)
-					QCC_LockTemp(var_c); // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
@@ -2428,7 +2417,6 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 
 			op = &pr_opcodes[OP_STOREP_F];
 			QCC_FreeTemp(var_c);
-
 			var_c = NULL;
 			QCC_FreeTemp(var_b);
 
@@ -2445,15 +2433,11 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 			//don't chain these... this expansion is not the same.
 			{
 				int st;
-				int need_lock = false;
 				for (st = numstatements-2; st>=0; st--)
 				{
 					if (statements[st].op == OP_ADDRESS)
 						if (statements[st].c == var_b->ofs)
 							break;
-
-					if (statements[st].op >= OP_CALL0 && statements[st].op <= OP_CALL8 || statements[st].op >= OP_CALL1H && statements[st].op <= OP_CALL8H)
-						need_lock = true;
 
 					if (statements[st].c == var_b->ofs)
 						QCC_PR_ParseWarning(0, "Temp-reuse may have broken your %s", op->name);
@@ -2461,8 +2445,6 @@ QCC_def_t *QCC_PR_Statement ( QCC_opcode_t *op, QCC_def_t *var_a, QCC_def_t *var
 				if (st < 0)
 					QCC_PR_ParseError(ERR_INTERNAL, "XSTOREP_V couldn't find pointer generation");
 				var_c = QCC_GetTemp(*op->type_c);
-				if(need_lock)
-					QCC_LockTemp(var_c); // this will cause the temp to be remapped by QCC_RemapLockedTemps
 
 				statement_linenums[statement-statements] = statement_linenums[st];
 				statement->op = OP_ADDRESS;
@@ -3557,6 +3539,7 @@ QCC_def_t *QCC_PR_ParseFunctionCall (QCC_def_t *func)	//warning, the func could 
 		{
 			//t = (a/%1) / (nextent(world)/%1)
 			//a/%1 does a (int)entity to float conversion type thing
+			func->initialized = 1;
 
 			e = QCC_PR_Expression(TOP_PRIORITY, EXPR_DISALLOW_COMMA);
 			QCC_PR_Expect(")");
@@ -4312,7 +4295,7 @@ PR_ParseValue
 Returns the global ofs for the current token
 ============
 */
-QCC_def_t	*QCC_PR_ParseValue (QCC_type_t *assumeclass)
+QCC_def_t	*QCC_PR_ParseValue (QCC_type_t *assumeclass, pbool allowarrayassign)
 {
 	QCC_def_t	*ao=NULL;	//arrayoffset
 	QCC_def_t		*d, *nd, *od;
@@ -4612,7 +4595,7 @@ reloop:
 					if (d->scope)
 						QCC_PR_ParseError(0, "Scoped array without specific engine support");
 
-					if (QCC_PR_CheckToken("="))
+					if (allowarrayassign && QCC_PR_CheckToken("="))
 					{
 						QCC_def_t *args[2];
 
@@ -4905,7 +4888,7 @@ reloop:
 				QCC_PR_Expect(")");
 			}
 			else
-				field = QCC_PR_ParseValue(d->type);
+				field = QCC_PR_ParseValue(d->type, false);
 			if (field->type->type == ev_field)
 			{
 				if (!field->type->aux_type)
@@ -5248,7 +5231,7 @@ QCC_def_t *QCC_PR_Term (void)
 			return e;
 		}
 	}
-	return QCC_PR_ParseValue (pr_classtype);
+	return QCC_PR_ParseValue (pr_classtype, true);
 }
 
 
@@ -7099,7 +7082,7 @@ void QCC_PR_ParseAsm(void)
 				{
 					patch1 = &statements[numstatements];
 
-					a = QCC_PR_ParseValue(pr_classtype);
+					a = QCC_PR_ParseValue(pr_classtype, false);
 					QCC_PR_Statement3(&pr_opcodes[op], a, NULL, NULL, true);
 
 					if (pr_token_type == tt_name)
@@ -7118,8 +7101,8 @@ void QCC_PR_ParseAsm(void)
 				{
 					patch1 = &statements[numstatements];
 
-					a = QCC_PR_ParseValue(pr_classtype);
-					b = QCC_PR_ParseValue(pr_classtype);
+					a = QCC_PR_ParseValue(pr_classtype, false);
+					b = QCC_PR_ParseValue(pr_classtype, false);
 					QCC_PR_Statement3(&pr_opcodes[op], a, b, NULL, true);
 
 					if (pr_token_type == tt_name)
@@ -7138,15 +7121,15 @@ void QCC_PR_ParseAsm(void)
 			else
 			{				
 				if (pr_opcodes[op].type_a != &type_void)
-					a = QCC_PR_ParseValue(pr_classtype);
+					a = QCC_PR_ParseValue(pr_classtype, false);
 				else
 					a=NULL;
 				if (pr_opcodes[op].type_b != &type_void)
-					b = QCC_PR_ParseValue(pr_classtype);
+					b = QCC_PR_ParseValue(pr_classtype, false);
 				else
 					b=NULL;
 				if (pr_opcodes[op].associative==ASSOC_LEFT && pr_opcodes[op].type_c != &type_void)
-					c = QCC_PR_ParseValue(pr_classtype);
+					c = QCC_PR_ParseValue(pr_classtype, false);
 				else
 					c=NULL;
 
@@ -9704,8 +9687,13 @@ void QCC_PR_ParseDefs (char *classname)
 					i = 0;
 					do
 					{
-						if (QCC_PR_CheckImmediate("0"))
+						if (pr_token_type == tt_immediate && (
+							(pr_immediate_type == type_integer && pr_immediate._int == 0) ||
+							(pr_immediate_type == type_float && pr_immediate._float == 0)))
+						{
+							QCC_PR_Lex();
 							G_FUNCTION(def->ofs+i) = 0;
+						}
 						else
 						{
 							name = QCC_PR_ParseName ();
